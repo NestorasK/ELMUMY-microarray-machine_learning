@@ -27,7 +27,9 @@ for thresholdi in thresholds:
 
     plt.figure()
     plt.hist(corr_of_cors, color="lightgrey", edgecolor="black")
-    plt.title("Correlations between binary and rma() expression values")
+    plt.title(
+        f"Correlations between binary and rma() expression values, thres:{thresholdi}"
+    )
     plt.xlabel("Pearson correlation")
     plt.ylabel("Counts")
     plt.savefig(f"data/figures/cors_of_cors_{thresholdi}.pdf")
