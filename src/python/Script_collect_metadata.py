@@ -48,7 +48,6 @@ phenodata_GSE13591[["class_crude", "other_info"]] = phenodata_GSE13591[
     "title"
 ].str.split(pat="-", regex=False, expand=True)
 phenodata_GSE13591["dataset"] = "GSE13591"
-
 phenodata_GSE13591["class_crude"].unique()
 
 
@@ -60,7 +59,6 @@ def map_conditions(value):
 
 
 phenodata_GSE13591["class"] = phenodata_GSE13591["class_crude"].apply(map_conditions)
-
 phenodata_GSE13591_clean = phenodata_GSE13591[["rn", "class", "dataset"]]
 
 
@@ -81,6 +79,7 @@ phenodata_all = pd.concat(
     ],
     ignore_index=True,
 )
+phenodata_all.to_csv("data/processed/metadata.csv")
 class_freqs = phenodata_all["class"].value_counts()
 class_freqs_perdataset = phenodata_all.groupby("dataset")["class"].value_counts()
 
