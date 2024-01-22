@@ -11,13 +11,18 @@ df_expr.drop(["Unnamed: 0"], axis=1, inplace=True)
 print(df_expr)
 
 print("Converting to binary...")
-df_binary = convert_to_binary_df(df=df_expr.drop("rn", axis=1), quantile_threshold=0.5)
-df_binary.insert(loc=0, column="ID", value=df_expr["rn"])
-print(df_binary)
+thresholds = [0, 0.25, 0.5, 0.75]
 
-freqs = get_frequencies(df=df_binary.drop(["ID"], axis=1))
+for thresholdi in thresholds:
+    df_binary = convert_to_binary_df(
+        df=df_expr.drop("rn", axis=1), quantile_threshold=thresholdi
+    )
+    df_binary.insert(loc=0, column="ID", value=df_expr["rn"])
+    print(df_binary)
 
-# Write binary file
-filenamei = "data/processed/geoSup_gpl96_platform_binary.csv"
-print(f"Writing df_binary {filenamei}")
-df_binary.to_csv(path_or_buf=filenamei)
+    freqs = get_frequencies(df=df_binary.drop(["ID"], axis=1))
+
+    # Write binary file
+    filenamei = f"data/processed/geoSup_gpl96_platform_binary_{thresholdi}.csv"
+    print(f"Writing df_binary {filenamei}")
+    df_binary.to_csv(path_or_buf=filenamei, index=False)
