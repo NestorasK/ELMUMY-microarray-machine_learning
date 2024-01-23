@@ -79,7 +79,7 @@ phenodata_all = pd.concat(
     ],
     ignore_index=True,
 )
-phenodata_all.to_csv("data/processed/metadata.csv")
+phenodata_all.to_csv("data/processed/metadata.csv", index=False)
 class_freqs = phenodata_all["class"].value_counts()
 class_freqs_perdataset = phenodata_all.groupby("dataset")["class"].value_counts()
 

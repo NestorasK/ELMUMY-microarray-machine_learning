@@ -1,6 +1,7 @@
 import pandas as pd
 
 # Convert expression values to ranking
+# Note: highest rank - highest expression
 file_expression = "data/processed/geoSup_gpl96_platform.csv"
 print(f"\nWorking on file: {file_expression}")
 df_expr = pd.read_csv(filepath_or_buffer=file_expression)
