@@ -13,7 +13,7 @@ print(df_expr)
 
 
 # Which genes to select
-# - Keep the probs that have a stable ranking in normal samples - TODO
+# - Keep the probs that have a stable ranking in normal samples
 df_metadata = pd.read_csv("data/processed/metadata.csv")
 df_metadata["samples"] = df_metadata["rn"] + ".CEL.gz"
 normal_samples = df_metadata[df_metadata["class"] == "Normal"]
