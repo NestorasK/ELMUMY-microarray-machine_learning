@@ -19,4 +19,4 @@ for fi in filenames:
 common_rows = reduce(lambda left, right: pd.merge(left, right, on="rn"), dfs)
 print("Common Rows:")
 print(common_rows)
-common_rows.to_csv(path_or_buf="data/processed/geoSup_gpl96_platform.csv")
+common_rows.to_csv(path_or_buf="data/processed/geoSup_gpl96_platform.csv", index=False)
