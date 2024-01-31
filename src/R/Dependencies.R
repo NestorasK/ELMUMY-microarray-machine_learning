@@ -3,3 +3,9 @@ if (!require("BiocManager", quietly = TRUE)) {
 }
 
 BiocManager::install("GEOquery")
+
+if (!require("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("oligo")

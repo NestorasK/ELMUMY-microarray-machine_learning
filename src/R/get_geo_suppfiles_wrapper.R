@@ -1,5 +1,6 @@
 library(GEOquery)
 library(affy)
+library(oligo)
 library(data.table)
 get_geo_suppfiles_wrapper <- function(
     geo_dataset, folder2save,
@@ -19,8 +20,35 @@ get_geo_suppfiles_wrapper <- function(
     )
 
     cat("Calculate expression from CEL files\n")
-    raw_data <- ReadAffy(celfile.path = paste0(folder2save, "CEL_files"))
-    norm_expression <- rma(raw_data, normalize = TRUE, background = TRUE)
+    norm_expression <- tryCatch(
+        {
+            raw_data <- ReadAffy(
+                celfile.path = paste0(folder2save, "CEL_files")
+            )
+            norm_expression <- affy::rma(
+                raw_data,
+                normalize = TRUE, background = TRUE
+            )
+        },
+        error = function(err) {
+            print(err)
+            cat("Using package oligo\n")
+            cel_files <- list.files(
+                path = paste0(folder2save, "CEL_files/"), pattern = ".CEL.gz",
+                full.names = TRUE
+            )
+            list.celfiles(
+                path = paste0(folder2save, "CEL_files"), full.names = TRUE
+            )
+            raw_data <- read.celfiles(cel_files)
+            norm_expression <- oligo::rma(
+                raw_data,
+                normalize = TRUE, background = TRUE
+            )
+            return(norm_expression)
+        }
+    )
+
     norm_expression_dt <- data.table(
         exprs(norm_expression),
         keep.rownames = TRUE
