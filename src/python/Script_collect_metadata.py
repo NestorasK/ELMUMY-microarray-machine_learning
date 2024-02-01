@@ -70,28 +70,76 @@ phenodata_GSE14230[["class", "other_info"]] = phenodata_GSE14230["title"].str.sp
 phenodata_GSE14230["dataset"] = "GSE14230"
 phenodata_GSE14230_clean = phenodata_GSE14230[["rn", "class", "dataset"]]
 
+
+# "data/raw/GSE235356/phenodata.csv"
+# Progression samples
+phenodata_GSE235356 = pd.read_csv("data/raw/GSE235356/phenodata.csv")
+phenodata_GSE235356["disease state:ch1"].value_counts()
+
+
+def map_conditions(value):
+    if value == "Stable MGUS":
+        return "MGUS"
+    elif value == "Progressing MGUS":
+        return "progressing_MGUS"
+    else:
+        return value
+
+
+phenodata_GSE235356["class"] = phenodata_GSE235356["disease state:ch1"].apply(
+    map_conditions
+)
+phenodata_GSE235356["dataset"] = "GSE235356"
+phenodata_GSE235356_clean = phenodata_GSE235356[["rn", "class", "dataset"]]
+
+# "data/raw/GSE2658/phenodata.csv"
+# Not sure if to use
+
+
+# "data/raw/GSE5900/phenodata.csv"
+phenodata_GSE5900 = pd.read_csv("data/raw/GSE5900/phenodata.csv")
+
+
+def map_conditions_gse5900(value):
+    if "MGUS" in value:
+        return "MGUS"
+    elif "smoldering" in value:
+        return "SMM"
+    elif "Healthy" in value:
+        return "Normal"
+    else:
+        return "something is wrong"
+
+
+phenodata_GSE5900["class"] = phenodata_GSE5900["title"].apply(map_conditions_gse5900)
+phenodata_GSE5900["class"].value_counts()
+phenodata_GSE5900["dataset"] = "GSE5900"
+phenodata_GSE5900_clean = phenodata_GSE5900[["rn", "class", "dataset"]]
+
+# Combine metadata all
 phenodata_all = pd.concat(
     [
         phenodata_GSE13591_clean,
         phenodata_GSE14230_clean,
         phenodata_GSE2113_clean,
         phenodata_GSE6477_clean,
+        phenodata_GSE235356_clean,
+        phenodata_GSE5900_clean,
     ],
     ignore_index=True,
 )
-phenodata_all.to_csv("data/processed_gpl96_platform/metadata.csv", index=False)
+phenodata_all.to_csv("data/processed_glp96_gpl570_platform/metadata.csv", index=False)
 class_freqs = phenodata_all["class"].value_counts()
 class_freqs_perdataset = phenodata_all.groupby("dataset")["class"].value_counts()
 
 
 # Plots
 # Frequencies across all datasets
-ax = class_freqs.plot(kind="bar", color="grey")
+ax = class_freqs.plot(kind="bar", color="grey", rot=45)
 plt.title("Class counts")
 plt.xlabel("Category")
 plt.ylabel("Count")
-plt.xticks(rotation=0, ha="center")
-plt.savefig("data/figures/metadata_class_frequencies.pdf")
+plt.savefig("data/processed_glp96_gpl570_platform/metadata_class_frequencies.pdf")
 
 # Frequencies per dataset
 grouped_counts_unstacked = class_freqs_perdataset.unstack()
@@ -105,7 +153,9 @@ plt.xticks(rotation=0, ha="center")
 plt.title("Category per dataset")
 
 # Save the plot
-plt.savefig("data/figures/metadata_class_frequencies_perdataset.pdf")
+plt.savefig(
+    "data/processed_glp96_gpl570_platform/metadata_class_frequencies_perdataset.pdf"
+)
 
 # Add sums and save to csv
 grouped_counts_unstacked["Sum"] = grouped_counts_unstacked.sum(axis=1)
@@ -113,5 +163,5 @@ grouped_counts_unstacked.loc["Sum"] = grouped_counts_unstacked.sum()
 grouped_counts_unstacked
 
 grouped_counts_unstacked.to_csv(
-    "data/figures/metadata_class_frequencies_perdataset.csv"
+    "data/processed_glp96_gpl570_platform/metadata_class_frequencies_perdataset.csv"
 )
