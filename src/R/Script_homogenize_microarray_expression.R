@@ -13,26 +13,51 @@ library(data.table)
 # GSE13591 ####
 expression13591 <- fread("data/raw/GSE13591/norm_expression_from_cel.csv")
 feature13591 <- fread("data/raw/GSE13591/feature_data.csv")
+colnames(expression13591) <- sapply(
+    X = strsplit(x = colnames(expression13591), split = ".", fixed = TRUE),
+    FUN = function(li) li[1]
+)
 
 # GSE14230 ####
 expression14230 <- fread("data/raw/GSE14230/norm_expression_from_cel.csv")
 feature14230 <- fread("data/raw/GSE14230/feature_data.csv")
+colnames(expression14230) <- sapply(
+    X = strsplit(x = colnames(expression14230), split = ".", fixed = TRUE),
+    FUN = function(li) li[1]
+)
 
 # GSE2113 ####
 expression2113 <- fread("data/raw/GSE2113/norm_expression_from_cel.csv")
 feature2113 <- fread("data/raw/GSE2113/feature_data.csv")
+colnames(expression2113) <- sapply(
+    X = strsplit(x = colnames(expression2113), split = ".", fixed = TRUE),
+    FUN = function(li) li[1]
+)
 
 # GSE235356 ####
 expression235356 <- fread("data/raw/GSE235356/norm_expression_from_cel.csv")
 feature235356 <- fread("data/raw/GSE235356/feature_data.csv")
+colnames(expression235356) <- sapply(
+    X = strsplit(x = colnames(expression235356), split = "_", fixed = TRUE),
+    FUN = function(li) li[1]
+)
 
 # GSE5900 #####
 expression5900 <- fread("data/raw/GSE5900/norm_expression_from_cel.csv")
 feature5900 <- fread("data/raw/GSE5900/feature_data.csv")
+colnames(expression5900) <- sapply(
+    X = strsplit(x = colnames(expression5900), split = "_", fixed = TRUE),
+    FUN = function(li) li[1]
+)
+
 
 # GSE6477 ####
 expression6477 <- fread("data/raw/GSE6477/norm_expression_from_cel.csv")
 feature6477 <- fread("data/raw/GSE6477/feature_data.csv")
+colnames(expression6477) <- sub(
+    pattern = ".CEL.gz", replacement = "", x = colnames(expression6477)
+)
+
 
 # Merge expression datasets
 merged_expression <- Reduce(
