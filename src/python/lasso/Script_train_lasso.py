@@ -4,10 +4,10 @@ from fetch_data import fetch_train_test
 from lasso.lasso_module import lasso_pipeline
 
 filenames_expression = [
-    "data/processed/geoSup_gpl96_platform.csv",
-    "data/processed/geoSup_gpl96_platform_binary_0.5.csv",
-    "data/processed/geoSup_gpl96_platform_ranking.csv",
-    "data/processed/geoSup_gpl96_platform_ratios.csv",
+    "data/processed_gpl96_platform/geoSup_gpl96_platform.csv",
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_binary_0.5.csv",
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_ranking.csv",
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_ratios.csv",
 ]
 
 reps = 20
@@ -23,8 +23,8 @@ for file_expressioni in filenames_expression:
     # print("Fetch train test")
     X_train, y_train, X_test, y_test = fetch_train_test(
         file_expression=file_expressioni,
-        fmeta_train="data/processed/metadata_train.csv",
-        fmeta_holdout="data/processed/metadata_holdout.csv",
+        fmeta_train="data/processed_gpl96_platform/metadata_train.csv",
+        fmeta_holdout="data/processed_gpl96_platform/metadata_holdout.csv",
     )
     print("Training Lasso")
     accuracies_cv_all = []
@@ -51,4 +51,4 @@ for file_expressioni in filenames_expression:
 df_all = pd.concat(dfs_out, ignore_index=True)
 print("All performances")
 print(df_all)
-df_all.to_csv("results/lasso/lasso_results.csv", index=False)
+df_all.to_csv("results/lasso_gpl96_platform/lasso_results.csv", index=False)

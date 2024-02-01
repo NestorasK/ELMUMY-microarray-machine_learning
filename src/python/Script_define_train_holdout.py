@@ -10,11 +10,11 @@
 
 import pandas as pd
 
-phenodata_all = pd.read_csv("data/processed/metadata.csv")
+phenodata_all = pd.read_csv("data/processed_gpl96_platform/metadata.csv")
 data_all = phenodata_all[phenodata_all["class"].isin(["Normal", "MGUS", "MM"])]
 train_all = data_all[data_all["dataset"] == "GSE6477"]
 train_all["class"].value_counts()
 hold_out = data_all[data_all["dataset"] != "GSE6477"]
 hold_out[["dataset", "class"]].value_counts()
-train_all.to_csv("data/processed/metadata_train.csv", index=False)
-hold_out.to_csv("data/processed/metadata_holdout.csv", index=False)
+train_all.to_csv("data/processed_gpl96_platform/metadata_train.csv", index=False)
+hold_out.to_csv("data/processed_gpl96_platform/metadata_holdout.csv", index=False)

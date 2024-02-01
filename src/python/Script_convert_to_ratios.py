@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from transform_data import calculate_ratios_df
 
 # Convert expression values to ratios
-file_expression = "data/processed/geoSup_gpl96_platform.csv"
+file_expression = "data/processed_gpl96_platform/geoSup_gpl96_platform.csv"
 print(f"Reading file: {file_expression}")
 df_expr = pd.read_csv(file_expression)
 print("Expression values...")
@@ -12,11 +12,13 @@ print(df_expr)
 
 # Which genes to select
 # - Keep the probs that have a stable ranking in normal samples
-df_metadata = pd.read_csv("data/processed/metadata.csv")
+df_metadata = pd.read_csv("data/processed_gpl96_platform/metadata.csv")
 df_metadata["samples"] = df_metadata["rn"] + ".CEL.gz"
 normal_samples = df_metadata[df_metadata["class"] == "Normal"]
 
-df_ranking = pd.read_csv("data/processed/geoSup_gpl96_platform_ranking.csv")
+df_ranking = pd.read_csv(
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_ranking.csv"
+)
 df_ranking_normal_samples = df_ranking.loc[:, normal_samples["samples"]]
 df_ranking_normal_samples["ranking_std"] = df_ranking_normal_samples.std(axis=1)
 df_ranking_normal_samples.insert(loc=0, column="rn", value=df_ranking["rn"])
@@ -68,4 +70,6 @@ print(f"\nNumber of NAs values in ratio calculations: {df_ratio.isna().sum().sum
 
 print("\ndf_ratio:")
 print(df_ratio)
-df_ratio.to_csv("data/processed/geoSup_gpl96_platform_ratios.csv", index=False)
+df_ratio.to_csv(
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_ratios.csv", index=False
+)

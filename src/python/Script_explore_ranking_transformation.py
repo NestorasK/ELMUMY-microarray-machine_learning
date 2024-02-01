@@ -2,14 +2,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read Expressions
-df_expr = pd.read_csv("data/processed/geoSup_gpl96_platform.csv")
+df_expr = pd.read_csv("data/processed_gpl96_platform/geoSup_gpl96_platform.csv")
 print("Expression values...")
 print(df_expr)
 df_expr.drop(["Unnamed: 0"], axis=1, inplace=True)
 print(df_expr)
 
 # Read ranking file
-df_ranking = pd.read_csv("data/processed/geoSup_gpl96_platform_ranking.csv")
+df_ranking = pd.read_csv(
+    "data/processed_gpl96_platform/geoSup_gpl96_platform_ranking.csv"
+)
 print(df_ranking)
 
 # Correlations
