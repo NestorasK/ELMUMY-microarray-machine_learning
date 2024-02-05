@@ -1,19 +1,38 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-lasso_results = pd.read_csv("results/lasso_gpl96_platform/lasso_results.csv")
+lasso_results = pd.read_csv("results/processed_glp96_gpl570_platform/lasso_results.csv")
 lasso_results["mean_cv_accuracy"] = lasso_results[
     ["cv.0", "cv.1", "cv.2", "cv.3", "cv.4"]
 ].mean(axis=1)
-lasso_results["method"] = lasso_results["filename"].str.split(pat="_").str[3]
-lasso_results["method"] = lasso_results["method"].str.split(pat=".").str[0]
-lasso_results["method"][lasso_results["method"].isna()] = "normalized"
-lasso_results["method"].unique()
+lasso_results["transformation"] = (
+    lasso_results["filename"]
+    .str.replace(pat="expression_", repl="")
+    .str.replace(pat=".csv", repl="")
+)
+lasso_results["transformation"].value_counts()
+lasso_results = lasso_results[lasso_results["transformation"] != "binary_0"]
 lasso_results.rename(columns={"test": "test_accuracy"}, inplace=True)
 
-fig, ax = plt.subplots()
-lasso_results[["test_accuracy", "mean_cv_accuracy", "method"]].boxplot(
-    by="method", grid=False, rot=45
+lasso_melt = pd.melt(
+    frame=lasso_results[["test_accuracy", "mean_cv_accuracy", "transformation"]],
+    id_vars="transformation",
+    var_name="metric",
+    value_name="accuracy",
 )
 
-plt.savefig("results/lasso_gpl96_platform/lasso_results.pdf")
+fig, ax = plt.subplots()
+sns.boxplot(
+    x="transformation",
+    y="accuracy",
+    hue="metric",
+    hue_order=["mean_cv_accuracy", "test_accuracy"],
+    data=lasso_melt,
+    palette="Set2",
+)
+
+plt.title(label="Repeated 20 times stratified CV | lasso | Normal, MGUS, MM")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig("results/processed_glp96_gpl570_platform/lasso_results.pdf")
