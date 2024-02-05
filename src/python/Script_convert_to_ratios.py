@@ -18,16 +18,6 @@ df_metadata.rename({"rn": "samples"}, axis=1, inplace=True)
 normal_samples = df_metadata[df_metadata["class"] == "Normal"]
 
 df_ranking = pd.read_csv("data/processed_glp96_gpl570_platform/expression_ranking.csv")
-
-# for ci in df_ranking.columns:
-#     print(ci)
-
-
-# for si in normal_samples["samples"]:
-#     print(si)
-#     print(si in df_ranking.columns)
-
-
 df_ranking_normal_samples = df_ranking.loc[:, normal_samples["samples"]]
 df_ranking_normal_samples["ranking_std"] = df_ranking_normal_samples.std(axis=1)
 df_ranking_normal_samples.insert(loc=0, column="rn", value=df_ranking["rn"])
