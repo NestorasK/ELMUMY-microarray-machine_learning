@@ -43,6 +43,7 @@ def lasso_pipeline(X_train, X_test, y_train, y_test_in, kfold):
     y_test_pred = lasso_model.predict(X_test_scaled)
     # Evaluate the performance on the test set
     accuracy_test = accuracy_score(y_test, y_test_pred)
+    report_test = classification_report(y_test, y_test_pred)
     # accuracy per dataset
     accuracy_test_per_dataset = []
     for dti in y_test_in["dataset"].unique():
@@ -50,4 +51,4 @@ def lasso_pipeline(X_train, X_test, y_train, y_test_in, kfold):
         accuracy_test_per_dataset.append(
             accuracy_score(y_true=y_test[inds], y_pred=y_test_pred[inds])
         )
-    return (accs_cv, accuracy_test, accuracy_test_per_dataset)
+    return (accs_cv, reports_cv, accuracy_test, accuracy_test_per_dataset, report_test)
