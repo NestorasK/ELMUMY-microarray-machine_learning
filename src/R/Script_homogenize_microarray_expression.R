@@ -59,19 +59,28 @@ colnames(expression6477) <- sub(
 )
 
 
-# Merge expression datasets
+# E-MTAB-316 ####
+expression_emtab316 <- fread("data/raw/E-MTAB-316/norm_expression_from_cel.csv")
+
+
+# E-MTAB-317 ####
+expression_emtab317 <- fread("data/raw/E-MTAB-317/norm_expression_from_cel.csv")
+
+
+# Merge expression datasets ####
 merged_expression <- Reduce(
     function(...) merge(..., by = "rn", all = FALSE),
     list(
         expression13591, expression14230, expression2113,
-        expression235356, expression5900, expression6477
+        expression235356, expression5900, expression6477,
+        expression_emtab316, expression_emtab317
     )
 )
 
-# Write
+# Write ####
 fwrite(
     x = merged_expression,
-    file = "data/processed_glp96_gpl570_platform/expression_rma.csv"
+    file = "data/processed_microarray/expression_rma.csv"
 )
 
 

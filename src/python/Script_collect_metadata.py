@@ -116,6 +116,50 @@ phenodata_GSE5900["class"].value_counts()
 phenodata_GSE5900["dataset"] = "GSE5900"
 phenodata_GSE5900_clean = phenodata_GSE5900[["rn", "class", "dataset"]]
 
+
+# data/raw/E-MTAB-316/phenodata.csv
+phenodata_emtab316 = pd.read_csv("data/raw/E-MTAB-316/phenodata.csv")
+phenodata_emtab316["Characteristics..DiseaseState."].unique()
+
+
+def map_conditions_emtab316(value):
+    if value == "multiple myeloma":
+        return "MM"
+    elif value == "monoclonal gammopathy of unknown significance (MGUS)":
+        return "MGUS"
+    else:
+        return "Something is wrong"
+
+
+phenodata_emtab316["class"] = phenodata_emtab316[
+    "Characteristics..DiseaseState."
+].apply(map_conditions_emtab316)
+phenodata_emtab316["class"].value_counts()
+phenodata_emtab316["dataset"] = "EMTAB316"
+phenodata_emtab316_clean = phenodata_emtab316[["rn", "class", "dataset"]]
+
+
+# data/raw/E-MTAB-317/phenodata.csv
+phenodata_emtab317 = pd.read_csv("data/raw/E-MTAB-317/phenodata.csv")
+phenodata_emtab317["Characteristics..DiseaseState."].value_counts()
+
+
+def map_conditions_emtab317(value):
+    if value == "myeloma":
+        return "MM"
+    elif value == "monoclonal gammopathy of unknown significance (MGUS)":
+        return "MGUS"
+    else:
+        return "Something is wrong"
+
+
+phenodata_emtab317["class"] = phenodata_emtab317[
+    "Characteristics..DiseaseState."
+].apply(map_conditions_emtab317)
+phenodata_emtab317["class"].value_counts()
+phenodata_emtab317["dataset"] = "EMTAB317"
+phenodata_emtab317_clean = phenodata_emtab317[["rn", "class", "dataset"]]
+
 # Combine metadata all
 phenodata_all = pd.concat(
     [
@@ -125,10 +169,12 @@ phenodata_all = pd.concat(
         phenodata_GSE6477_clean,
         phenodata_GSE235356_clean,
         phenodata_GSE5900_clean,
+        phenodata_emtab316_clean,
+        phenodata_emtab317_clean,
     ],
     ignore_index=True,
 )
-phenodata_all.to_csv("data/processed_glp96_gpl570_platform/metadata.csv", index=False)
+phenodata_all.to_csv("data/processed_microarray/metadata.csv", index=False)
 class_freqs = phenodata_all["class"].value_counts()
 class_freqs_perdataset = phenodata_all.groupby("dataset")["class"].value_counts()
 
@@ -139,23 +185,24 @@ ax = class_freqs.plot(kind="bar", color="grey", rot=45)
 plt.title("Class counts")
 plt.xlabel("Category")
 plt.ylabel("Count")
-plt.savefig("data/processed_glp96_gpl570_platform/metadata_class_frequencies.pdf")
+plt.tight_layout()
+plt.savefig("data/processed_microarray/metadata_class_frequencies.pdf")
 
 # Frequencies per dataset
 grouped_counts_unstacked = class_freqs_perdataset.unstack()
 # Plot the bar plot
-ax = grouped_counts_unstacked.plot(kind="bar", stacked=True, colormap="viridis")
+ax = grouped_counts_unstacked.plot(
+    kind="bar", stacked=True, colormap="viridis", figsize=(8, 6)
+)
 
 # Set labels and title
 plt.xlabel("dataset")
 plt.ylabel("Count")
-plt.xticks(rotation=0, ha="center")
+plt.xticks(rotation=45, ha="center")
 plt.title("Category per dataset")
-
+plt.tight_layout()
 # Save the plot
-plt.savefig(
-    "data/processed_glp96_gpl570_platform/metadata_class_frequencies_perdataset.pdf"
-)
+plt.savefig("data/processed_microarray/metadata_class_frequencies_perdataset.pdf")
 
 # Add sums and save to csv
 grouped_counts_unstacked["Sum"] = grouped_counts_unstacked.sum(axis=1)
@@ -163,5 +210,5 @@ grouped_counts_unstacked.loc["Sum"] = grouped_counts_unstacked.sum()
 grouped_counts_unstacked
 
 grouped_counts_unstacked.to_csv(
-    "data/processed_glp96_gpl570_platform/metadata_class_frequencies_perdataset.csv"
+    "data/processed_microarray/metadata_class_frequencies_perdataset.csv"
 )
