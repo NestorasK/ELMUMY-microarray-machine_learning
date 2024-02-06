@@ -2,7 +2,7 @@ import pandas as pd
 
 # Convert expression values to ranking
 # Note: highest rank - highest expression
-file_expression = "data/processed_glp96_gpl570_platform/expression_rma.csv"
+file_expression = "data/processed_microarray/expression_rma.csv"
 print(f"\nWorking on file: {file_expression}")
 df_expr = pd.read_csv(filepath_or_buffer=file_expression)
 print("Expression values...")
@@ -14,6 +14,6 @@ df_ranking.insert(loc=0, column="rn", value=df_expr["rn"])
 print(df_ranking)
 
 df_ranking.to_csv(
-    "data/processed_glp96_gpl570_platform/expression_ranking.csv",
+    "data/processed_microarray/expression_ranking.csv",
     index=False,
 )

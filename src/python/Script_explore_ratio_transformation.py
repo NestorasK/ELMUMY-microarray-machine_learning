@@ -2,12 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read Expressions
-df_expr = pd.read_csv("data/processed_gpl96_platform/geoSup_gpl96_platform.csv")
+df_expr = pd.read_csv("data/processed_microarray/expression_rma.csv")
 print("Expression values...")
 print(df_expr)
 
 # Read ratio file
-df_ratio = pd.read_csv("data/processed_gpl96_platform/geoSup_gpl96_platform_ratios.csv")
+df_ratio = pd.read_csv("data/processed_microarray/expression_ratios.csv")
 print("Ratio values...")
 print(df_ratio)
 
@@ -25,4 +25,4 @@ plt.hist(corr_of_cors, color="lightgrey", edgecolor="black")
 plt.title("Correlations between ratios and rma() expression values")
 plt.xlabel("Pearson correlation")
 plt.ylabel("Counts")
-plt.savefig(f"data/processed_gpl96_platform/cors_of_cors_ratios.pdf")
+plt.savefig(f"data/processed_microarray/cors_of_cors_ratios.pdf")
