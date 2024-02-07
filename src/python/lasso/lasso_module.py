@@ -2,14 +2,15 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
+import pandas as pd
 
 
-def lasso_pipeline(X_train, X_test, y_train, y_test_in, kfold):
+def lasso_pipeline(X_train, X_test, y_train_in, y_test_in, kfold):
     """Write something here"""
     # Create a Lasso model #####
     # Convert categorical labels to numerical encoding
     label_encoder = LabelEncoder()
-    y_train = label_encoder.fit_transform(y_train)
+    y_train = label_encoder.fit_transform(y_train_in)
     y_test = label_encoder.fit_transform(y_test_in["class"])
     # Split the data into training and testing sets
     # X_train, X_test, y_train, y_test = train_test_split(
@@ -20,7 +21,7 @@ def lasso_pipeline(X_train, X_test, y_train, y_test_in, kfold):
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     # Create a StratifiedKFold cross-validation strategy
-    stratified_cv = StratifiedKFold(n_splits=kfold, shuffle=True, random_state=42)
+    stratified_cv = StratifiedKFold(n_splits=kfold, shuffle=True)
     # Create and fit a Logistic Regression model with L1 regularization (Lasso)
     lasso_model = LogisticRegression(
         penalty="l1", solver="liblinear", multi_class="auto", max_iter=1000
@@ -51,4 +52,16 @@ def lasso_pipeline(X_train, X_test, y_train, y_test_in, kfold):
         accuracy_test_per_dataset.append(
             accuracy_score(y_true=y_test[inds], y_pred=y_test_pred[inds])
         )
-    return (accs_cv, reports_cv, accuracy_test, accuracy_test_per_dataset, report_test)
+    accuracy_test_per_dataset_out = pd.DataFrame(
+        {
+            "dataset": list(y_test_in["dataset"].unique()),
+            "accuracy_test": accuracy_test_per_dataset,
+        },
+    )
+    return (
+        accs_cv,
+        reports_cv,
+        accuracy_test,
+        accuracy_test_per_dataset_out,
+        report_test,
+    )

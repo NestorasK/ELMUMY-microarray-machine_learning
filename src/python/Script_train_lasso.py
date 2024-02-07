@@ -5,16 +5,16 @@ from lasso.lasso_module import lasso_pipeline
 
 # Input ####
 filenames_expression = [
-    "data/processed_glp96_gpl570_platform/expression_rma.csv",
-    "data/processed_glp96_gpl570_platform/expression_binary_0.csv",
-    "data/processed_glp96_gpl570_platform/expression_binary_0.25.csv",
-    "data/processed_glp96_gpl570_platform/expression_binary_0.5.csv",
-    "data/processed_glp96_gpl570_platform/expression_binary_0.75.csv",
-    "data/processed_glp96_gpl570_platform/expression_ranking.csv",
-    "data/processed_glp96_gpl570_platform/expression_ratios.csv",
+    "data/processed_microarray/expression_rma.csv",
+    "data/processed_microarray/expression_binary_0.csv",
+    "data/processed_microarray/expression_binary_0.25.csv",
+    "data/processed_microarray/expression_binary_0.5.csv",
+    "data/processed_microarray/expression_binary_0.75.csv",
+    "data/processed_microarray/expression_ranking.csv",
+    "data/processed_microarray/expression_ratios.csv",
 ]
-fmetadata_train = "data/processed_glp96_gpl570_platform/metadata_train.csv"
-fmetadata_holdout = "data/processed_glp96_gpl570_platform/metadata_holdout.csv"
+fmetadata_train = "data/processed_microarray/metadata_train.csv"
+fmetadata_holdout = "data/processed_microarray/metadata_holdout.csv"
 
 # Calculations ####
 reps = 20
@@ -25,9 +25,10 @@ colnames_out.append("test")
 colnames_out.append("filename")
 file_expressioni = filenames_expression[0]
 dfs_out = []
+dfs_out_test_perdataset = []
 for file_expressioni in filenames_expression:
     print(f"\n#### Reading file: {file_expressioni} ######")
-    # print("Fetch train test")
+    print("Fetch train test datasets")
     X_train, y_train, X_test, y_test = fetch_train_test(
         file_expression=file_expressioni,
         fmeta_train=fmetadata_train,
@@ -48,7 +49,11 @@ for file_expressioni in filenames_expression:
             accuracy_test_per_dataset,
             report_test,
         ) = lasso_pipeline(
-            X_train=X_train, X_test=X_test, y_train=y_train, y_test_in=y_test, kfold=5
+            X_train=X_train,
+            X_test=X_test,
+            y_train_in=y_train,
+            y_test_in=y_test,
+            kfold=5,
         )
         print(f"accuracies_cv: {accuracies_cv}")
         print(f"accuracy_test: {accuracy_test}")
@@ -58,6 +63,7 @@ for file_expressioni in filenames_expression:
         accuracies_cv_all.append(accuracies_cv)
         report_cv_all.append(report_cv)
         accuracy_test_all.append(accuracy_test)
+        accuracy_test_per_dataset["rep"] = repi
         accuracy_test_per_dataset_all.append(accuracy_test_per_dataset)
         report_test_all.append(report_test)
     df_cv = pd.DataFrame(accuracies_cv_all)
@@ -66,8 +72,18 @@ for file_expressioni in filenames_expression:
     df_out["file"] = file_expressioni.split(sep="/")[2]
     df_out.columns = colnames_out
     dfs_out.append(df_out)
+    df_out_test_pdt = pd.concat(accuracy_test_per_dataset_all, ignore_index=True)
+    df_out_test_pdt["file"] = file_expressioni.split(sep="/")[2]
+    dfs_out_test_perdataset.append(df_out_test_pdt)
 
 df_all = pd.concat(dfs_out, ignore_index=True)
 print("All performances")
 print(df_all)
-df_all.to_csv("results/processed_glp96_gpl570_platform/lasso_results.csv", index=False)
+df_all.to_csv("results/processed_microarray/lasso_accuracy.csv", index=False)
+
+df_all_per_dt = pd.concat(dfs_out_test_perdataset, ignore_index=True)
+print("All performances per dataset")
+print(df_all_per_dt)
+df_all_per_dt.to_csv(
+    "results/processed_microarray/lasso_accuracy_per_dataset.csv", index=False
+)

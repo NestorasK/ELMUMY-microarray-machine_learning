@@ -2,14 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-lasso_results = pd.read_csv("results/processed_glp96_gpl570_platform/lasso_results.csv")
+lasso_results = pd.read_csv("results/processed_microarray/lasso_accuracy.csv")
 lasso_results["mean_cv_accuracy"] = lasso_results[
     ["cv.0", "cv.1", "cv.2", "cv.3", "cv.4"]
 ].mean(axis=1)
 lasso_results["transformation"] = (
     lasso_results["filename"]
-    .str.replace(pat="expression_", repl="")
-    .str.replace(pat=".csv", repl="")
+    .str.replace(pat="expression_", repl="", regex=False)
+    .str.replace(pat=".csv", repl="", regex=False)
 )
 lasso_results["transformation"].value_counts()
 lasso_results = lasso_results[lasso_results["transformation"] != "binary_0"]
@@ -35,4 +35,4 @@ sns.boxplot(
 plt.title(label="Repeated 20 times stratified CV | lasso | Normal, MGUS, MM")
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig("results/processed_glp96_gpl570_platform/lasso_results.pdf")
+plt.savefig("results/processed_microarray/lasso_results.pdf")
