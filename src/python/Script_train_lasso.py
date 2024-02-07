@@ -5,16 +5,16 @@ from lasso.lasso_module import lasso_pipeline
 
 # Input ####
 filenames_expression = [
-    "data/processed_microarray/expression_rma.csv",
-    "data/processed_microarray/expression_binary_0.csv",
-    "data/processed_microarray/expression_binary_0.25.csv",
-    "data/processed_microarray/expression_binary_0.5.csv",
-    "data/processed_microarray/expression_binary_0.75.csv",
-    "data/processed_microarray/expression_ranking.csv",
-    "data/processed_microarray/expression_ratios.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_rma.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_binary_0.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_binary_0.25.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_binary_0.5.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_binary_0.75.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_ranking.csv",
+    "data/processed_gpl96_gpl570_affy44_platform/expression_ratios.csv",
 ]
-fmetadata_train = "data/processed_microarray/metadata_train.csv"
-fmetadata_holdout = "data/processed_microarray/metadata_holdout.csv"
+fmetadata_train = "data/processed_gpl96_gpl570_affy44_platform/metadata_train.csv"
+fmetadata_holdout = "data/processed_gpl96_gpl570_affy44_platform/metadata_holdout.csv"
 
 # Calculations ####
 reps = 20
@@ -79,11 +79,14 @@ for file_expressioni in filenames_expression:
 df_all = pd.concat(dfs_out, ignore_index=True)
 print("All performances")
 print(df_all)
-df_all.to_csv("results/processed_microarray/lasso_accuracy.csv", index=False)
+df_all.to_csv(
+    "results/processed_gpl96_gpl570_affy44_platform/lasso_accuracy.csv", index=False
+)
 
 df_all_per_dt = pd.concat(dfs_out_test_perdataset, ignore_index=True)
 print("All performances per dataset")
 print(df_all_per_dt)
 df_all_per_dt.to_csv(
-    "results/processed_microarray/lasso_accuracy_per_dataset.csv", index=False
+    "results/processed_gpl96_gpl570_affy44_platform/lasso_accuracy_per_dataset.csv",
+    index=False,
 )

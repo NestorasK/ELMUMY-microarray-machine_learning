@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 lasso_results = pd.read_csv(
-    "results/processed_microarray/lasso_accuracy_per_dataset.csv"
+    "results/processed_gpl96_gpl570_affy44_platform/lasso_accuracy_per_dataset.csv"
 )
 lasso_results["transformation"] = (
     lasso_results["file"]
@@ -47,4 +47,6 @@ plt.subplots_adjust(top=0.9)
 # Set the suptitle outside the figure to prevent overlapping with the subplot titles
 g.fig.suptitle("Accuracy vs Transformation for Each Dataset")
 
-plt.savefig("results/processed_microarray/lasso_results_per_dataset_stripplot.pdf")
+plt.savefig(
+    "results/processed_gpl96_gpl570_affy44_platform/lasso_results_per_dataset_stripplot.pdf"
+)

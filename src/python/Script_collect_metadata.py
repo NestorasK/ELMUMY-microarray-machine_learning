@@ -174,7 +174,9 @@ phenodata_all = pd.concat(
     ],
     ignore_index=True,
 )
-phenodata_all.to_csv("data/processed_microarray/metadata.csv", index=False)
+phenodata_all.to_csv(
+    "data/processed_gpl96_gpl570_affy44_platform/metadata.csv", index=False
+)
 class_freqs = phenodata_all["class"].value_counts()
 class_freqs_perdataset = phenodata_all.groupby("dataset")["class"].value_counts()
 
@@ -186,7 +188,9 @@ plt.title("Class counts")
 plt.xlabel("Category")
 plt.ylabel("Count")
 plt.tight_layout()
-plt.savefig("data/processed_microarray/metadata_class_frequencies.pdf")
+plt.savefig(
+    "data/processed_gpl96_gpl570_affy44_platform/metadata_class_frequencies.pdf"
+)
 
 # Frequencies per dataset
 grouped_counts_unstacked = class_freqs_perdataset.unstack()
@@ -202,7 +206,9 @@ plt.xticks(rotation=45, ha="center")
 plt.title("Category per dataset")
 plt.tight_layout()
 # Save the plot
-plt.savefig("data/processed_microarray/metadata_class_frequencies_perdataset.pdf")
+plt.savefig(
+    "data/processed_gpl96_gpl570_affy44_platform/metadata_class_frequencies_perdataset.pdf"
+)
 
 # Add sums and save to csv
 grouped_counts_unstacked["Sum"] = grouped_counts_unstacked.sum(axis=1)
@@ -210,5 +216,5 @@ grouped_counts_unstacked.loc["Sum"] = grouped_counts_unstacked.sum()
 grouped_counts_unstacked
 
 grouped_counts_unstacked.to_csv(
-    "data/processed_microarray/metadata_class_frequencies_perdataset.csv"
+    "data/processed_gpl96_gpl570_affy44_platform/metadata_class_frequencies_perdataset.csv"
 )

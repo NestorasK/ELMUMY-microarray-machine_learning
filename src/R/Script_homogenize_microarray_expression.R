@@ -80,7 +80,7 @@ merged_expression <- Reduce(
 # Write ####
 fwrite(
     x = merged_expression,
-    file = "data/processed_microarray/expression_rma.csv"
+    file = "data/processed_gpl96_gpl570_affy44_platform/expression_rma.csv"
 )
 
 

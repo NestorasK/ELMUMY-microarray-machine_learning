@@ -2,12 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read Expressions
-df_expr = pd.read_csv("data/processed_microarray/expression_rma.csv")
+df_expr = pd.read_csv("data/processed_gpl96_gpl570_affy44_platform/expression_rma.csv")
 print("Expression values...")
 print(df_expr)
 
 # Read ranking file
-df_ranking = pd.read_csv("data/processed_microarray/expression_ranking.csv")
+df_ranking = pd.read_csv(
+    "data/processed_gpl96_gpl570_affy44_platform/expression_ranking.csv"
+)
 print("Ranking values...")
 print(df_ranking)
 
@@ -25,4 +27,4 @@ plt.hist(corr_of_cors, color="lightgrey", edgecolor="black")
 plt.title("Correlations between ranking and rma() expression values")
 plt.xlabel("Pearson correlation")
 plt.ylabel("Counts")
-plt.savefig(f"data/processed_microarray/cors_of_cors_ranking.pdf")
+plt.savefig(f"data/processed_gpl96_gpl570_affy44_platform/cors_of_cors_ranking.pdf")

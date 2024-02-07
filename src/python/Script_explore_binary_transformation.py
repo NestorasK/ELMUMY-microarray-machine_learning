@@ -2,14 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read Expressions
-df_expr = pd.read_csv("data/processed_microarray/expression_rma.csv")
+df_expr = pd.read_csv("data/processed_gpl96_gpl570_affy44_platform/expression_rma.csv")
 print("Expression values...")
 print(df_expr)
 
 # Read binary file
 thresholds = [0, 0.25, 0.5, 0.75]
 for thresholdi in thresholds:
-    filei = f"data/processed_microarray/expression_binary_{thresholdi}.csv"
+    filei = f"data/processed_gpl96_gpl570_affy44_platform/expression_binary_{thresholdi}.csv"
     print(filei)
     df_binary = pd.read_csv(filei)
     print(df_binary)
@@ -29,4 +29,6 @@ for thresholdi in thresholds:
     )
     plt.xlabel("Pearson correlation")
     plt.ylabel("Counts")
-    plt.savefig(f"data/processed_microarray/cors_of_cors_{thresholdi}.pdf")
+    plt.savefig(
+        f"data/processed_gpl96_gpl570_affy44_platform/cors_of_cors_{thresholdi}.pdf"
+    )

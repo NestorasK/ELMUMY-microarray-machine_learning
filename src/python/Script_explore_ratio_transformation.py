@@ -2,12 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read Expressions
-df_expr = pd.read_csv("data/processed_microarray/expression_rma.csv")
+df_expr = pd.read_csv("data/processed_gpl96_gpl570_affy44_platform/expression_rma.csv")
 print("Expression values...")
 print(df_expr)
 
 # Read ratio file
-df_ratio = pd.read_csv("data/processed_microarray/expression_ratiosfromranks.csv")
+df_ratio = pd.read_csv(
+    "data/processed_gpl96_gpl570_affy44_platform/expression_ratiosfromranks.csv"
+)
 print("Ratio values...")
 print(df_ratio)
 
@@ -27,4 +29,6 @@ plt.hist(corr_of_cors, color="lightgrey", edgecolor="black")
 plt.title("Correlations between ratios from ranking and rma() expression values")
 plt.xlabel("Pearson correlation")
 plt.ylabel("Counts")
-plt.savefig(f"data/processed_microarray/cors_of_cors_ratiosfromranks.pdf")
+plt.savefig(
+    f"data/processed_gpl96_gpl570_affy44_platform/cors_of_cors_ratiosfromranks.pdf"
+)
