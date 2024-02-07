@@ -12,13 +12,9 @@ import pandas as pd
 
 phenodata_all = pd.read_csv("data/processed_gpl96_gpl570_affy44_platform/metadata.csv")
 data_all = phenodata_all[phenodata_all["class"].isin(["Normal", "MGUS", "MM"])]
-train_all = data_all[data_all["dataset"] == "GSE6477"]
-train_all["class"].value_counts()
-hold_out = data_all[data_all["dataset"] != "GSE6477"]
+train_all = data_all[data_all["dataset"] == "EMTAB317"]
+train_all[["dataset", "class"]].value_counts()
+hold_out = data_all[data_all["dataset"] == "EMTAB316"]
 hold_out[["dataset", "class"]].value_counts()
-train_all.to_csv(
-    "data/processed_gpl96_gpl570_affy44_platform/metadata_train.csv", index=False
-)
-hold_out.to_csv(
-    "data/processed_gpl96_gpl570_affy44_platform/metadata_holdout.csv", index=False
-)
+train_all.to_csv("data/processed_affy44_platform/metadata_train.csv", index=False)
+hold_out.to_csv("data/processed_affy44_platform/metadata_holdout.csv", index=False)

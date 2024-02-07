@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 import pandas as pd
 
 
@@ -27,6 +27,7 @@ def lasso_pipeline(X_train, X_test, y_train_in, y_test_in, kfold):
         penalty="l1", solver="liblinear", multi_class="auto", max_iter=1000
     )
     # Perform stratified cross-validation
+    aucs_cv = []
     accs_cv = []
     reports_cv = []
     for train_index, test_index in stratified_cv.split(X_train_scaled, y_train):
@@ -38,6 +39,7 @@ def lasso_pipeline(X_train, X_test, y_train_in, y_test_in, kfold):
         accs_cv.append(accuracy)
         report = classification_report(y_val_cv, y_val_pred)
         reports_cv.append(report)
+        aucs_cv.append(roc_auc_score(y_val_cv, y_val_pred))
     # After cross-validation, you can train the final model on the entire training set
     lasso_model.fit(X_train_scaled, y_train)
     # Predict on the test set
@@ -45,6 +47,7 @@ def lasso_pipeline(X_train, X_test, y_train_in, y_test_in, kfold):
     # Evaluate the performance on the test set
     accuracy_test = accuracy_score(y_test, y_test_pred)
     report_test = classification_report(y_test, y_test_pred)
+    auc_test = roc_auc_score(y_test, y_test_pred)
     # accuracy per dataset
     accuracy_test_per_dataset = []
     for dti in y_test_in["dataset"].unique():
@@ -62,6 +65,8 @@ def lasso_pipeline(X_train, X_test, y_train_in, y_test_in, kfold):
         accs_cv,
         reports_cv,
         accuracy_test,
+        aucs_cv,
+        auc_test,
         accuracy_test_per_dataset_out,
         report_test,
     )
