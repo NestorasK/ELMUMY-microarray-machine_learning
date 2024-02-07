@@ -7,12 +7,14 @@ print("Expression values...")
 print(df_expr)
 
 # Read ratio file
-df_ratio = pd.read_csv("data/processed_microarray/expression_ratios.csv")
+df_ratio = pd.read_csv("data/processed_microarray/expression_ratiosfromranks.csv")
 print("Ratio values...")
 print(df_ratio)
 
 # Correlations
-print("Calculate samples' correlation inside ranking and inside expression values")
+print(
+    "Calculate samples' correlation inside ratios from ranking and inside expression values"
+)
 print("Then calculate the correlations between the two correlation tables")
 corr_mat_expr = df_expr.drop(["rn"], axis=1).corr()
 corr_mat_ratio = df_ratio.corr()
@@ -22,7 +24,7 @@ for coli in corr_mat_expr.columns:
     corr_of_cors.append(corr_mat_expr[coli].corr(corr_mat_ratio[coli]))
 
 plt.hist(corr_of_cors, color="lightgrey", edgecolor="black")
-plt.title("Correlations between ratios and rma() expression values")
+plt.title("Correlations between ratios from ranking and rma() expression values")
 plt.xlabel("Pearson correlation")
 plt.ylabel("Counts")
-plt.savefig(f"data/processed_microarray/cors_of_cors_ratios.pdf")
+plt.savefig(f"data/processed_microarray/cors_of_cors_ratiosfromranks.pdf")
