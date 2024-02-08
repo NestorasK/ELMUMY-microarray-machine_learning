@@ -2,6 +2,7 @@ rm(list = ls())
 library(data.table)
 library(glmnet)
 library(pROC)
+library(ggplot2)
 
 # Input ####
 files_expr <- c(
@@ -14,15 +15,15 @@ files_expr <- c(
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratios.csv",
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratiosfromranks.csv"
 )
-fmeta_train <- "data/processed_affy44_platform/metadata_train.csv"
-fmeta_test <- "data/processed_affy44_platform/metadata_holdout.csv"
-path2save <- "results/lasso_affy44_platform/"
+fmeta_train <- "data/processed_gpl96_platform/metadata_train.csv"
+fmeta_test <- "data/processed_gpl96_platform/metadata_holdout.csv"
+path2save <- "results/lasso_gpl96_platform/"
 reps <- 20
 
 # Calculations ####
-aucs_holdout <- matrix(data = NA, nrow = length(files_expr), ncol = reps)
-aucs_mean_cv <- aucs_holdout
-numfeatures <- aucs_holdout
+accuracys_holdout <- matrix(data = NA, nrow = length(files_expr), ncol = reps)
+accuracys_mean_cv <- accuracys_holdout
+numfeatures <- accuracys_holdout
 
 for (ifile in seq_len(length.out = length(files_expr))) {
     fi <- files_expr[ifile]
@@ -42,19 +43,21 @@ for (ifile in seq_len(length.out = length(files_expr))) {
         # fit lasso
         lasso_model <- cv.glmnet(
             x = datain$train_x, y = datain$train_y,
-            family = "binomial",
-            type.measure = "auc"
+            family = "multinomial",
+            type.measure = "class"
         )
-        aucs_mean_cv[ifile, repi] <- lasso_model$cvm[lasso_model$index[2]]
+        accuracys_mean_cv[ifile, repi] <- (
+            1 - lasso_model$cvm[lasso_model$index[2]]
+        )
         numfeatures[ifile, repi] <- lasso_model$nzero[lasso_model$index[2]]
 
         # Test on hold out
         holdout_y_pred <- predict(
             object = lasso_model,
-            newx = datain$holdout_x, type = "response"
+            newx = datain$holdout_x, type = "class"
         )
-        aucs_holdout[ifile, repi] <- auc(
-            response = datain$holdout_y, predictor = as.numeric(holdout_y_pred)
+        accuracys_holdout[ifile, repi] <- mean(
+            as.vector(holdout_y_pred) == datain$holdout_y
         )
     }
 }
@@ -64,18 +67,18 @@ transformations <- sub(
         pattern = "expression_", replacement = "", x = basename(files_expr)
     )
 )
-aucs_mean_cv_dt <- data.table(aucs_mean_cv)
-colnames(aucs_mean_cv_dt) <- paste0("rep_", 1:reps)
-aucs_mean_cv_dt$transformations <- transformations
-aucs_mean_cv_dt$metric <- "auc_cvmean"
+accuracys_mean_cv_dt <- data.table(accuracys_mean_cv)
+colnames(accuracys_mean_cv_dt) <- paste0("rep_", 1:reps)
+accuracys_mean_cv_dt$transformations <- transformations
+accuracys_mean_cv_dt$metric <- "accuracy_cvmean"
 
-aucs_holdout <- data.table(aucs_holdout)
-colnames(aucs_holdout) <- paste0("rep_", 1:reps)
-aucs_holdout$transformations <- transformations
-aucs_holdout$metric <- "auc_holdout"
+accuracys_holdout <- data.table(accuracys_holdout)
+colnames(accuracys_holdout) <- paste0("rep_", 1:reps)
+accuracys_holdout$transformations <- transformations
+accuracys_holdout$metric <- "accuracy_holdout"
 
-aucs_all <- rbindlist(l = list(aucs_mean_cv_dt, aucs_holdout))
-fwrite(x = aucs_all, file = paste0(path2save, "aucs_all.csv"))
+accuracys_all <- rbindlist(l = list(accuracys_mean_cv_dt, accuracys_holdout))
+fwrite(x = accuracys_all, file = paste0(path2save, "accuracys_all.csv"))
 
 numfeatures <- data.table(numfeatures)
 colnames(numfeatures) <- paste0("rep_", 1:reps)
@@ -85,10 +88,10 @@ fwrite(x = numfeatures, file = paste0(path2save, "numfeatures.csv"))
 # Plots
 plot_perf <- ggplot(
     data = melt.data.table(
-        data = aucs_all, id.vars = c("transformations", "metric"),
-        value.name = "auc"
+        data = accuracys_all, id.vars = c("transformations", "metric"),
+        value.name = "accuracy"
     ),
-    mapping = aes(x = transformations, y = auc, fill = metric)
+    mapping = aes(x = transformations, y = accuracy, fill = metric)
 ) +
     geom_boxplot() +
     ylim(0.5, 1) +
@@ -109,5 +112,5 @@ plot_numfeat <- ggplot(
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(
     filename = paste0(path2save, "boxplot_numfeatures.pdf"),
-    plot = plot_numfeat, width = 7, height = 5
+    plot = plot_numfeat, width = 4, height = 4
 )
