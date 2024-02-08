@@ -80,15 +80,10 @@ accuracys_holdout$metric <- "accuracy_holdout"
 accuracys_all <- rbindlist(l = list(accuracys_mean_cv_dt, accuracys_holdout))
 fwrite(x = accuracys_all, file = paste0(path2save, "accuracys_all.csv"))
 
-accuracys_all <- fread(paste0(path2save, "accuracys_all.csv"))
-
-
 numfeatures <- data.table(numfeatures)
 colnames(numfeatures) <- paste0("rep_", 1:reps)
 numfeatures$transformations <- transformations
 fwrite(x = numfeatures, file = paste0(path2save, "numfeatures.csv"))
-
-numfeatures <- fread(paste0(path2save, "numfeatures.csv"))
 
 # Plots
 plot_perf <- ggplot(
