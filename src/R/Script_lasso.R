@@ -15,9 +15,9 @@ files_expr <- c(
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratios.csv",
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratiosfromranks.csv"
 )
-fmeta_train <- "data/processed_gpl96_platform/metadata_train.csv"
-fmeta_test <- "data/processed_gpl96_platform/metadata_holdout.csv"
-path2save <- "results/lasso_gpl96_platform/"
+fmeta_train <- "data/processed_glp96_gpl570_platform/metadata_train.csv"
+fmeta_test <- "data/processed_glp96_gpl570_platform/metadata_holdout.csv"
+path2save <- "results/processed_glp96_gpl570_platform/"
 reps <- 20
 
 # Calculations ####
@@ -80,10 +80,15 @@ accuracys_holdout$metric <- "accuracy_holdout"
 accuracys_all <- rbindlist(l = list(accuracys_mean_cv_dt, accuracys_holdout))
 fwrite(x = accuracys_all, file = paste0(path2save, "accuracys_all.csv"))
 
+accuracys_all <- fread(paste0(path2save, "accuracys_all.csv"))
+
+
 numfeatures <- data.table(numfeatures)
 colnames(numfeatures) <- paste0("rep_", 1:reps)
 numfeatures$transformations <- transformations
 fwrite(x = numfeatures, file = paste0(path2save, "numfeatures.csv"))
+
+numfeatures <- fread(paste0(path2save, "numfeatures.csv"))
 
 # Plots
 plot_perf <- ggplot(
@@ -94,7 +99,6 @@ plot_perf <- ggplot(
     mapping = aes(x = transformations, y = accuracy, fill = metric)
 ) +
     geom_boxplot() +
-    ylim(0.5, 1) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(
     filename = paste0(path2save, "boxplot_performance.pdf"),
