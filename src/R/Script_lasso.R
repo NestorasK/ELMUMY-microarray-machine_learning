@@ -15,12 +15,13 @@ files_expr <- c(
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratios.csv",
     "data/processed_gpl96_gpl570_affy44_platform/expression_ratiosfromranks.csv"
 )
-fmeta_train <- "data/processed_glp96_gpl570_platform/metadata_train.csv"
-fmeta_test <- "data/processed_glp96_gpl570_platform/metadata_holdout.csv"
-path2save <- "results/processed_glp96_gpl570_platform/"
+fmeta_train <- "data/processed_gpl96_gpl570_affy44_platform/metadata_train.csv"
+fmeta_test <- "data/processed_gpl96_gpl570_affy44_platform/metadata_holdout.csv"
+path2save <- "results/processed_gpl96_gpl570_affy44_platform/"
 reps <- 20
 
 # Calculations ####
+set.seed(42)
 accuracys_holdout <- matrix(data = NA, nrow = length(files_expr), ncol = reps)
 accuracys_mean_cv <- accuracys_holdout
 numfeatures <- accuracys_holdout
