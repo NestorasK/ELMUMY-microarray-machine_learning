@@ -10,6 +10,7 @@ print(df_expr)
 
 print("Ranking the expression values per sample")
 df_ranking = df_expr.drop("rn", axis=1).rank()
+df_ranking = df_ranking / df_ranking.shape[0]
 df_ranking.insert(loc=0, column="rn", value=df_expr["rn"])
 print(df_ranking)
 
