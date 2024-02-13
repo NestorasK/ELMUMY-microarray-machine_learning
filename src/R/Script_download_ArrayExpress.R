@@ -12,14 +12,14 @@ hgd_browse()
 load("data/raw/E-MTAB-316/E-MTAB-316.eSet.RData")
 # download manual from
 # https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-316
-expression_rma_emtab_316 <- rma(object = study[[1]])
+expression_rma_emtab_316 <- rma(object = study[[1]], normalize = FALSE)
 
 fwrite(
     x = data.table(
         expression_rma_emtab_316@assayData$exprs,
         keep.rownames = TRUE
     ),
-    file = "data/raw/E-MTAB-316/norm_expression_from_cel.csv"
+    file = "data/raw/E-MTAB-316/background_corrected_expression_from_cel.csv"
 )
 fwrite(
     x = data.table(
@@ -35,14 +35,14 @@ fwrite(
 # https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-317
 rm(list = ls())
 load("data/raw/E-MTAB-317/E-MTAB-317.eSet.RData")
-expression_rma_emtab_317 <- rma(object = study)
+expression_rma_emtab_317 <- rma(object = study, normalize = FALSE)
 
 fwrite(
     x = data.table(
         expression_rma_emtab_317@assayData$exprs,
         keep.rownames = TRUE
     ),
-    file = "data/raw/E-MTAB-317/norm_expression_from_cel.csv"
+    file = "data/raw/E-MTAB-317/background_corrected_expression_from_cel.csv"
 )
 fwrite(
     x = data.table(expression_rma_emtab_317@phenoData@data,
