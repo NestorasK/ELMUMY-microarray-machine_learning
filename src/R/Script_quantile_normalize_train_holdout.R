@@ -20,7 +20,7 @@ fsmeta_test <- sub(
 
 # Calculations ####
 expr <- fread(file_expr)
-
+ifile <- 1
 for (ifile in seq_len(length.out = length(fsmeta_train))) {
     cat("\nPerforming quantile normalization on:", fsmeta_train[ifile], "\n")
 
@@ -43,10 +43,6 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
     train_x_qnorm <- t(normalize.quantiles(t(datain$train_x)))
     rownames(train_x_qnorm) <- rownames(datain$train_x)
     colnames(train_x_qnorm) <- colnames(datain$train_x)
-    fwrite(
-        x = data.table(train_x_qnorm, keep.rownames = TRUE),
-        file = paste0(path2save, "/qnorm_expression_train.csv")
-    )
 
     # holdout
     holdout_x_qnorm <- t(
@@ -57,9 +53,16 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
     )
     rownames(holdout_x_qnorm) <- rownames(datain$holdout_x)
     colnames(holdout_x_qnorm) <- colnames(datain$holdout_x)
+
+    # merge data
+    merge_x_qnorm <- merge.data.table(
+        x = data.table(t(train_x_qnorm), keep.rownames = TRUE),
+        y = data.table(t(holdout_x_qnorm), keep.rownames = TRUE),
+        by = "rn"
+    )
     fwrite(
-        x = data.table(holdout_x_qnorm, keep.rownames = TRUE),
-        file = paste0(path2save, "/qnorm_expression_holdout.csv")
+        x = merge_x_qnorm,
+        file = paste0(path2save, "/background_corrected_expression_qnorm.csv")
     )
 
     # diagnostic plots
