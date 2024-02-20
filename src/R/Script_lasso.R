@@ -22,10 +22,9 @@ reps <- 20
 
 # Calculations ####
 set.seed(42)
-accuracys_holdout <- matrix(data = NA, nrow = length(files_expr), ncol = reps)
-accuracys_mean_cv <- accuracys_holdout
-numfeatures <- accuracys_holdout
-
+accuracys_mean_cv <- matrix(data = NA, nrow = length(files_expr), ncol = reps)
+numfeatures <- accuracys_mean_cv
+accuracys_holdout <- vector("list", length = length(files_expr))
 for (ifile in seq_len(length.out = length(files_expr))) {
     fi <- files_expr[ifile]
     cat("\nTraining using", fi, "\n")
@@ -38,6 +37,14 @@ for (ifile in seq_len(length.out = length(files_expr))) {
         expres = expr,
         meta_train = meta_train, meta_holdout = meta_holdout
     )
+    transformationi <- sub(
+        ".csv", "",
+        sub(
+            pattern = "expression_",
+            replacement = "", x = basename(fi)
+        )
+    )
+    accuracys_holdout_repi <- vector("list", reps)
     for (repi in 1:reps) {
         cat("-", repi, "out of", reps, "\n")
 
@@ -57,11 +64,36 @@ for (ifile in seq_len(length.out = length(files_expr))) {
             object = lasso_model,
             newx = datain$holdout_x, type = "class"
         )
-        accuracys_holdout[ifile, repi] <- mean(
-            as.vector(holdout_y_pred) == datain$holdout_y
+        rownames(holdout_y_pred) <- rownames(datain$holdout_x)
+
+        preds_dt <- merge.data.table(
+            x = meta_holdout,
+            y = data.table(holdout_y_pred, keep.rownames = TRUE),
+            by = "rn"
         )
+        colnames(preds_dt)[4] <- "class_hat"
+        accuracy_holdout_per_dataset <- preds_dt[
+            , .(accuracy = mean(class == class_hat)),
+            by = dataset
+        ]
+        accuracys_holdout_all <- rbindlist(
+            l = list(
+                data.table(
+                    dataset = "all",
+                    accuracy = mean(preds_dt$class == preds_dt$class_hat)
+                ),
+                accuracy_holdout_per_dataset
+            )
+        )
+        accuracys_holdout_all$transformations <- transformationi
+        accuracys_holdout_repi[[repi]] <- accuracys_holdout_all
     }
+    accuracys_holdout[[ifile]] <- rbindlist(l = accuracys_holdout_repi)
 }
+accuracys_holdout <- rbindlist(l = accuracys_holdout)
+accuracys_holdout$metric <- "accuracy_holdout"
+
+# Accuracy mean CV
 transformations <- sub(
     ".csv", "",
     sub(
@@ -72,13 +104,19 @@ accuracys_mean_cv_dt <- data.table(accuracys_mean_cv)
 colnames(accuracys_mean_cv_dt) <- paste0("rep_", 1:reps)
 accuracys_mean_cv_dt$transformations <- transformations
 accuracys_mean_cv_dt$metric <- "accuracy_cvmean"
+accuracys_mean_cv_dt <- melt.data.table(
+    data = accuracys_mean_cv_dt,
+    id.vars = c("metric", "transformations"), value.name = "accuracy"
+)
+accuracys_mean_cv_dt$dataset <- "all"
 
-accuracys_holdout <- data.table(accuracys_holdout)
-colnames(accuracys_holdout) <- paste0("rep_", 1:reps)
-accuracys_holdout$transformations <- transformations
-accuracys_holdout$metric <- "accuracy_holdout"
-
-accuracys_all <- rbindlist(l = list(accuracys_mean_cv_dt, accuracys_holdout))
+# Combine all
+accuracys_all <- rbindlist(
+    l = list(
+        accuracys_holdout, accuracys_mean_cv_dt[, -"variable"]
+    ),
+    use.names = TRUE
+)
 fwrite(x = accuracys_all, file = paste0(path2save, "accuracys_all.csv"))
 
 numfeatures <- data.table(numfeatures)
@@ -88,17 +126,19 @@ fwrite(x = numfeatures, file = paste0(path2save, "numfeatures.csv"))
 
 # Plots
 plot_perf <- ggplot(
-    data = melt.data.table(
-        data = accuracys_all, id.vars = c("transformations", "metric"),
-        value.name = "accuracy"
-    ),
+    data = accuracys_all,
     mapping = aes(x = transformations, y = accuracy, fill = metric)
 ) +
     geom_boxplot() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom"
+    ) +
+    facet_grid(cols = vars(dataset)) +
+    scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1))
 ggsave(
     filename = paste0(path2save, "boxplot_performance.pdf"),
-    plot = plot_perf, width = 7, height = 5
+    plot = plot_perf, width = 15, height = 5
 )
 
 plot_numfeat <- ggplot(
