@@ -65,16 +65,22 @@ for (ifile in seq_len(length.out = length(files_expr))) {
             object = lasso_model,
             newx = datain$holdout_x, type = "class"
         )
-        preds_dt <- data.table(preds = holdout_y_pred, meta_holdout)
+        rownames(holdout_y_pred) <- rownames(datain$holdout_x)
+        preds_dt <- merge.data.table(
+            x = meta_holdout,
+            y = data.table(holdout_y_pred, keep.rownames = TRUE),
+            by = "rn"
+        )
+        colnames(preds_dt)[4] <- "class_hat"
         accuracy_holdout_per_dataset <- preds_dt[
-            , .(accuracy = mean(preds.1 == class)),
+            , .(accuracy = mean(class_hat == class)),
             by = dataset
         ]
         accuracys_holdout_all <- rbindlist(
             list(
                 data.table(
                     dataset = "all",
-                    accuracy = mean(preds_dt$preds.1 == preds_dt$class)
+                    accuracy = mean(preds_dt$class_hat == preds_dt$class)
                 ),
                 accuracy_holdout_per_dataset
             )
