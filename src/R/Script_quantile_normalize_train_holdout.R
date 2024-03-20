@@ -10,11 +10,11 @@ file_expr <- paste0(
     "background_corrected_expression_rma.csv"
 )
 fsmeta_train <- list.files(
-    path = "data", pattern = "metadata_train.csv",
+    path = path2read, pattern = "metadata_train_",
     full.names = TRUE, recursive = TRUE
 )
 fsmeta_test <- sub(
-    pattern = "metadata_train.csv", replacement = "metadata_holdout.csv",
+    pattern = "metadata_train_", replacement = "metadata_holdout_",
     x = fsmeta_train
 )
 
@@ -60,15 +60,27 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
         y = data.table(t(holdout_x_qnorm), keep.rownames = TRUE),
         by = "rn"
     )
-    fwrite(
-        x = merge_x_qnorm,
-        file = paste0(path2save, "/background_corrected_expression_qnorm.csv")
+    filename_qnorm <- sub(
+        pattern = "metadata_train_",
+        replacement = "background_corrected_expression_qnorm_",
+        x = fsmeta_train[ifile]
     )
+    cat("Write qnorm file:", filename_qnorm, "\n")
+    fwrite(x = merge_x_qnorm, file = filename_qnorm)
 
     # diagnostic plots
+    filename_diagnostic_plots <- sub(
+        pattern = ".csv", replacement = ".pdf",
+        x = sub(
+            pattern = "metadata_train_",
+            replacement = "diagnostic_plot_quantile_norm_",
+            x = fsmeta_train[ifile]
+        )
+    )
+    cat("Write diagnostics plot file:", filename_diagnostic_plots, "\n")
     pdf(
-        file = paste0(path2save, "/diagnostic_plot_quantile_norm.pdf"),
-        width = 10, height = 20
+        file = filename_diagnostic_plots,
+        width = 5, height = 10
     )
     par(mfrow = c(2, 1))
     df_background <- as.data.frame(

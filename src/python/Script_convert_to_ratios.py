@@ -18,12 +18,6 @@ df_ranking = pd.read_csv(
     "data/processed_gpl96_gpl570_affy44_platform/"
     + "background_corrected_expression_ranking.csv"
 )
-
-df_expr = pd.read_csv(
-    "data/processed_gpl96_gpl570_affy44_platform/"
-    + "background_corrected_expression_qnorm.csv"
-)
-
 df_ranking_normal_samples = df_ranking.loc[:, normal_samples["samples"]]
 df_ranking_normal_samples["ranking_std"] = df_ranking_normal_samples.std(axis=1)
 df_ranking_normal_samples.insert(loc=0, column="rn", value=df_ranking["rn"])
@@ -36,55 +30,60 @@ print(df_ranking_normal_samples)
 # 210 probes so that the total features will be 21945 - close to the number
 # of the total number of probes
 
-# Plots to test ###
-# Select 10 probes
-df_rank_select_normal = df_ranking_normal_samples.head(n=10)
+# # Plots to test ###
+# # Select 10 probes
+# df_rank_select_normal = df_ranking_normal_samples.head(n=10)
 
-df_expr_select_normal = df_expr.loc[
-    df_expr["rn"].isin(df_rank_select_normal["rn"]),
-    df_ranking_normal_samples.columns.drop("ranking_std"),
-]
-transposed_df_expr_select_normal = df_expr_select_normal.drop(["rn"], axis=1).T
-transposed_df_expr_select_normal.boxplot()
+# df_expr = pd.read_csv(
+#     "data/processed_gpl96_gpl570_affy44_platform/"
+#     + "background_corrected_expression_qnorm.csv"
+# )
 
-plt.title("Top 10 from the selected probes")
-plt.xlabel("Selected probes")
-plt.ylabel("Expression qnorm")
-plt.savefig(
-    "data/processed_gpl96_gpl570_affy44_platform/"
-    + "boxplots_selected_probes_ratios_trainingset.pdf"
-)
+# df_expr_select_normal = df_expr.loc[
+#     df_expr["rn"].isin(df_rank_select_normal["rn"]),
+#     df_ranking_normal_samples.columns.drop("ranking_std"),
+# ]
+# transposed_df_expr_select_normal = df_expr_select_normal.drop(["rn"], axis=1).T
+# transposed_df_expr_select_normal.boxplot()
 
-# Unselected to test - 10 probes
-df_rank_unselect_normal = df_ranking_normal_samples.tail(n=10)
-df_expr_unselect_normal = df_expr.loc[
-    df_expr["rn"].isin(df_rank_unselect_normal["rn"]),
-    df_ranking_normal_samples.columns.drop("ranking_std"),
-]
-transposed_df_expr_unselect_normal = df_expr_unselect_normal.drop(["rn"], axis=1).T
+# plt.title("Top 10 from the selected probes")
+# plt.xlabel("Selected probes")
+# plt.ylabel("Expression qnorm")
+# plt.savefig(
+#     "data/processed_gpl96_gpl570_affy44_platform/"
+#     + "boxplots_selected_probes_ratios_trainingset.pdf"
+# )
 
-plt.figure()
-transposed_df_expr_unselect_normal.boxplot()
-plt.title("Top 10 from the unselected probes")
-plt.xlabel("Probes")
-plt.ylabel("Expression qnorm")
-plt.savefig(
-    "data/processed_gpl96_gpl570_affy44_platform/"
-    + "boxplots_unselected_probes_ratios_trainingset.pdf"
-)
+# # Unselected to test - 10 probes
+# df_rank_unselect_normal = df_ranking_normal_samples.tail(n=10)
+# df_expr_unselect_normal = df_expr.loc[
+#     df_expr["rn"].isin(df_rank_unselect_normal["rn"]),
+#     df_ranking_normal_samples.columns.drop("ranking_std"),
+# ]
+# transposed_df_expr_unselect_normal = df_expr_unselect_normal.drop(["rn"], axis=1).T
+
+# plt.figure()
+# transposed_df_expr_unselect_normal.boxplot()
+# plt.title("Top 10 from the unselected probes")
+# plt.xlabel("Probes")
+# plt.ylabel("Expression qnorm")
+# plt.savefig(
+#     "data/processed_gpl96_gpl570_affy44_platform/"
+#     + "boxplots_unselected_probes_ratios_trainingset.pdf"
+# )
 
 df_rank_select_normal = df_ranking_normal_samples.head(n=210)
 
 # Convert expression values to ratios
 files_expression = find_files(
-    directory_path="data/", filename_pattern="background_corrected_expression_qnorm.csv"
+    directory_path="data/processed_gpl96_gpl570_affy44_platform/",
+    filename_pattern="background_corrected_expression_qnorm_*",
 )
 for file_expression in files_expression:
     print(f"\nReading file: {file_expression}")
     df_expr = pd.read_csv(file_expression)
     print("Expression values...")
     print(df_expr)
-
     # Convert expressions to ratios
     df_expr_select = df_expr.loc[df_expr["rn"].isin(df_rank_select_normal["rn"]), :]
     df_ratio = calculate_ratios_df(
@@ -96,8 +95,8 @@ for file_expression in files_expression:
     print("\ndf_ratio:")
     print(df_ratio)
     filename_ratios = file_expression.replace(
-        "background_corrected_expression_qnorm.csv",
-        "background_corrected_expression_ratios.csv",
+        "background_corrected_expression_qnorm",
+        "background_corrected_expression_ratios",
     )
     print(f"Writing file: {filename_ratios}")
     df_ratio.to_csv(filename_ratios, index=False)

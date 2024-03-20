@@ -10,11 +10,32 @@
 
 import pandas as pd
 
-phenodata_all = pd.read_csv("data/processed_gpl96_gpl570_affy44_platform/metadata.csv")
-data_all = phenodata_all[phenodata_all["class"].isin(["Normal", "MGUS", "MM"])]
-train_all = data_all[data_all["dataset"] == "EMTAB317"]
-train_all[["dataset", "class"]].value_counts()
-hold_out = data_all[data_all["dataset"] == "EMTAB316"]
-hold_out[["dataset", "class"]].value_counts()
-train_all.to_csv("data/processed_affy44_platform/metadata_train.csv", index=False)
-hold_out.to_csv("data/processed_affy44_platform/metadata_holdout.csv", index=False)
+# User input
+classes_to_separate = ["MGUS", "MM"]
+training_datasets = [["GSE6477"], ["EMTAB317"], ["GSE6477", "EMTAB317"]]
+path2read = "data/processed_gpl96_gpl570_affy44_platform/"
+path2write = "data/processed_gpl96_gpl570_affy44_platform/"
+
+# Calculations
+phenodata_all = pd.read_csv(path2read + "metadata.csv")
+data_all = phenodata_all[phenodata_all["class"].isin(classes_to_separate)]
+training_dataset = training_datasets[0]
+for training_dataset in training_datasets:
+    print(f"\ntraining_dataset:{training_dataset}")
+    train_all = data_all[data_all["dataset"].isin(training_dataset)]
+    train_all[["dataset", "class"]].value_counts()
+    hold_out = data_all[~data_all["dataset"].isin(training_dataset)]
+    hold_out[["dataset", "class"]].value_counts()
+    filename_train = (
+        path2write
+        + "metadata_train_classes:"
+        + str(classes_to_separate)
+        + "_dataset:"
+        + str(training_dataset)
+        + ".csv"
+    )
+    print(f"filename_train: '{filename_train}'")
+    train_all.to_csv(filename_train, index=False)
+    filename_holdout = filename_train.replace("_train_", "_holdout_")
+    print(f"filename_holdout: '{filename_holdout}'")
+    hold_out.to_csv(filename_holdout, index=False)
