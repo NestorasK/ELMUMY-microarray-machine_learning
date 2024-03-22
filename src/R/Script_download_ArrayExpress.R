@@ -19,7 +19,7 @@ fwrite(
         expression_rma_emtab_316@assayData$exprs,
         keep.rownames = TRUE
     ),
-    file = "data/raw/E-MTAB-316/background_corrected_expression_from_cel.csv"
+    file = "data/raw/E-MTAB-316/only_background_corrected_expression_from_cel.csv"
 )
 fwrite(
     x = data.table(
@@ -42,7 +42,7 @@ fwrite(
         expression_rma_emtab_317@assayData$exprs,
         keep.rownames = TRUE
     ),
-    file = "data/raw/E-MTAB-317/background_corrected_expression_from_cel.csv"
+    file = "data/raw/E-MTAB-317/only_background_corrected_expression_from_cel.csv"
 )
 fwrite(
     x = data.table(expression_rma_emtab_317@phenoData@data,

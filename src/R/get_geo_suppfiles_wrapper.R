@@ -27,7 +27,7 @@ get_geo_suppfiles_wrapper <- function(
             )
             norm_expression <- affy::rma(
                 raw_data,
-                normalize = TRUE, background = TRUE
+                normalize = FALSE, background = TRUE
             )
         },
         error = function(err) {
@@ -43,7 +43,7 @@ get_geo_suppfiles_wrapper <- function(
             raw_data <- read.celfiles(cel_files)
             norm_expression <- oligo::rma(
                 raw_data,
-                normalize = TRUE, background = TRUE
+                normalize = FALSE, background = TRUE
             )
             return(norm_expression)
         }

@@ -14,7 +14,10 @@ out <- foreach(geo_dataset = geo_datasets, .errorhandling = "pass") %do% {
     cat("\nWorking on", geo_dataset, "\n")
 
     folder2save <- paste0("data/raw/", geo_dataset, "/")
-    f_normexpression_cel <- paste0(folder2save, "norm_expression_from_cel.csv")
+    f_normexpression_cel <- paste0(
+        folder2save,
+        "only_background_corrected_expression_from_cel.csv"
+    )
 
     if (file.exists(f_normexpression_cel)) {
         cat("Skipping...\n")
