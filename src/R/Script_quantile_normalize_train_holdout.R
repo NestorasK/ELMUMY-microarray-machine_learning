@@ -13,9 +13,10 @@ fsmeta_train <- list.files(
     path = path2read, pattern = "metadata_train_",
     full.names = TRUE, recursive = TRUE
 )
-fsmeta_test <- sub(
-    pattern = "metadata_train_", replacement = "metadata_holdout_",
-    x = fsmeta_train
+fsmeta_test <- list.files(
+    path = path2read,
+    pattern = ".*holdout.*progressing_MGUS.*",
+    full.names = TRUE, recursive = TRUE
 )
 
 # Calculations ####
