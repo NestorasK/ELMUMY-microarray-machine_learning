@@ -17,15 +17,17 @@ files_expr_stable <- paste0(
         "background_corrected_expression_binary_0.25.csv",
         "background_corrected_expression_binary_0.5.csv",
         "background_corrected_expression_binary_0.75.csv",
-        "background_corrected_expression_ranking.csv"
+        "background_corrected_expression_ranking.csv",
+        "background_corrected_expression_ratios.csv"
     )
 )
 fsmeta_train <- list.files(
     path = path2read, pattern = "metadata_train_classes", full.names = TRUE
 )
-fsmeta_test <- sub(
-    pattern = "_train_", replacement = "_holdout_",
-    x = fsmeta_train
+fsmeta_test <- list.files(
+    path = path2read,
+    pattern = ".*holdout.*progressing_MGUS.*",
+    full.names = TRUE, recursive = TRUE
 )
 path2save <- "results/processed_gpl96_gpl570_affy44_platform/"
 reps <- 20
@@ -120,6 +122,7 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
                 y = holdout_y_pred,
                 by = "rn"
             )
+            preds_dt[class == "progressing_MGUS", "class"] <- "MM"
 
             # Accuracy
             accuracy_holdout_per_dataset <- preds_dt[
@@ -141,7 +144,7 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
 
             # AUCs
             auc_holdout_per_dataset <- preds_dt[
-                !dataset %in% c("GSE235356", "GSE5900"),
+                !dataset %in% c("GSE5900"),
                 .(performance = pROC::auc(
                     response = class,
                     predictor = predicted_prob
@@ -154,10 +157,10 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
                         dataset = "all",
                         performance = pROC::auc(
                             response = preds_dt[
-                                !dataset %in% c("GSE235356", "GSE5900"), class
+                                !dataset %in% c("GSE5900"), class
                             ],
                             predictor = preds_dt[
-                                !dataset %in% c("GSE235356", "GSE5900"),
+                                !dataset %in% c("GSE5900"),
                                 predicted_prob
                             ]
                         )
