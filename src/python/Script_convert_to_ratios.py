@@ -19,7 +19,8 @@ df_ranking = pd.read_csv(
     + "background_corrected_expression_ranking.csv"
 )
 df_ranking_normal_samples = df_ranking.loc[:, normal_samples["samples"]]
-df_ranking_normal_samples["ranking_std"] = df_ranking_normal_samples.std(axis=1)
+df_ranking_normal_samples["ranking_std"] = df_ranking_normal_samples.std(
+    axis=1)
 df_ranking_normal_samples.insert(loc=0, column="rn", value=df_ranking["rn"])
 df_ranking_normal_samples.sort_values(by="ranking_std", inplace=True)
 
@@ -75,28 +76,28 @@ print(df_ranking_normal_samples)
 df_rank_select_normal = df_ranking_normal_samples.head(n=210)
 
 # Convert expression values to ratios
-files_expression = find_files(
-    directory_path="data/processed_gpl96_gpl570_affy44_platform/",
-    filename_pattern="background_corrected_expression_qnorm_*",
+file_expression = "data/processed_gpl96_gpl570_affy44_platform/" + \
+    "background_corrected_expression_rma.csv"
+
+print(f"\nReading file: {file_expression}")
+df_expr = pd.read_csv(file_expression)
+print("Expression values...")
+print(df_expr)
+# Convert expressions to ratios
+df_expr_select = df_expr.loc[df_expr["rn"].isin(
+    df_rank_select_normal["rn"]), :]
+df_ratio = calculate_ratios_df(
+    df=df_expr_select.drop(["rn"], axis=1), verbose=False
 )
-for file_expression in files_expression:
-    print(f"\nReading file: {file_expression}")
-    df_expr = pd.read_csv(file_expression)
-    print("Expression values...")
-    print(df_expr)
-    # Convert expressions to ratios
-    df_expr_select = df_expr.loc[df_expr["rn"].isin(df_rank_select_normal["rn"]), :]
-    df_ratio = calculate_ratios_df(
-        df=df_expr_select.drop(["rn"], axis=1), verbose=False
-    )
-    print(
-        f"\nNumber of NAs values in ratio calculations: {df_ratio.isna().sum().sum()}"
-    )
-    print("\ndf_ratio:")
-    print(df_ratio)
-    filename_ratios = file_expression.replace(
-        "background_corrected_expression_qnorm",
-        "background_corrected_expression_ratios",
-    )
-    print(f"Writing file: {filename_ratios}")
-    df_ratio.to_csv(filename_ratios, index=False)
+print(
+    f"\nNumber of NAs values in ratio calculations: {
+        df_ratio.isna().sum().sum()}"
+)
+print("\ndf_ratio:")
+print(df_ratio)
+filename_ratios = file_expression.replace(
+    "background_corrected_expression_rma",
+    "background_corrected_expression_ratios",
+)
+print(f"Writing file: {filename_ratios}")
+df_ratio.to_csv(filename_ratios, index=False)
