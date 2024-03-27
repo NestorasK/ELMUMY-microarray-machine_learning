@@ -12,7 +12,7 @@ library(data.table)
 
 # GSE13591 ####
 expression13591 <- fread(
-    "data/raw/GSE13591/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE13591/only_background_corrected_expression_from_cel.csv"
 )
 feature13591 <- fread("data/raw/GSE13591/feature_data.csv")
 colnames(expression13591) <- sapply(
@@ -22,7 +22,7 @@ colnames(expression13591) <- sapply(
 
 # GSE14230 ####
 expression14230 <- fread(
-    "data/raw/GSE14230/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE14230/only_background_corrected_expression_from_cel.csv"
 )
 feature14230 <- fread("data/raw/GSE14230/feature_data.csv")
 colnames(expression14230) <- sapply(
@@ -32,7 +32,7 @@ colnames(expression14230) <- sapply(
 
 # GSE2113 ####
 expression2113 <- fread(
-    "data/raw/GSE2113/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE2113/only_background_corrected_expression_from_cel.csv"
 )
 feature2113 <- fread("data/raw/GSE2113/feature_data.csv")
 colnames(expression2113) <- sapply(
@@ -42,7 +42,7 @@ colnames(expression2113) <- sapply(
 
 # GSE235356 ####
 expression235356 <- fread(
-    "data/raw/GSE235356/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE235356/only_background_corrected_expression_from_cel.csv"
 )
 feature235356 <- fread("data/raw/GSE235356/feature_data.csv")
 colnames(expression235356) <- sapply(
@@ -52,7 +52,7 @@ colnames(expression235356) <- sapply(
 
 # GSE5900 #####
 expression5900 <- fread(
-    "data/raw/GSE5900/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE5900/only_background_corrected_expression_from_cel.csv"
 )
 feature5900 <- fread("data/raw/GSE5900/feature_data.csv")
 colnames(expression5900) <- sapply(
@@ -63,7 +63,7 @@ colnames(expression5900) <- sapply(
 
 # GSE6477 ####
 expression6477 <- fread(
-    "data/raw/GSE6477/background_corrected_expression_from_cel.csv"
+    "data/raw/GSE6477/only_background_corrected_expression_from_cel.csv"
 )
 feature6477 <- fread("data/raw/GSE6477/feature_data.csv")
 colnames(expression6477) <- sub(
@@ -73,13 +73,13 @@ colnames(expression6477) <- sub(
 
 # E-MTAB-316 ####
 expression_emtab316 <- fread(
-    "data/raw/E-MTAB-316/background_corrected_expression_from_cel.csv"
+    "data/raw/E-MTAB-316/only_background_corrected_expression_from_cel.csv"
 )
 
 
 # E-MTAB-317 ####
 expression_emtab317 <- fread(
-    "data/raw/E-MTAB-317/background_corrected_expression_from_cel.csv"
+    "data/raw/E-MTAB-317/only_background_corrected_expression_from_cel.csv"
 )
 
 
