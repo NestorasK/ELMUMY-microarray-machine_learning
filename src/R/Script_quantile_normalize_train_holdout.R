@@ -10,14 +10,16 @@ file_expr <- paste0(
     "background_corrected_expression_rma.csv"
 )
 fsmeta_train <- list.files(
-    path = path2read, pattern = "metadata_train_",
+    path = path2read, pattern = "metadata_train.*Normal*",
     full.names = TRUE, recursive = TRUE
 )
+cat("Metadata to train:", fsmeta_train, "\n")
 fsmeta_test <- list.files(
     path = path2read,
-    pattern = ".*holdout.*progressing_MGUS.*",
+    pattern = ".*holdout.*Normal.*",
     full.names = TRUE, recursive = TRUE
 )
+cat("Metadata to test:", fsmeta_test, "\n")
 
 # Calculations ####
 expr <- fread(file_expr)
@@ -44,6 +46,11 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
     train_x_qnorm <- t(normalize.quantiles(t(datain$train_x)))
     rownames(train_x_qnorm) <- rownames(datain$train_x)
     colnames(train_x_qnorm) <- colnames(datain$train_x)
+    cat("\nTraining data rma\n")
+    print(datain$train_x[1:5, 1:5])
+
+    cat("\nTraining data qnorm\n")
+    print(train_x_qnorm[1:5, 1:5])
 
     # holdout
     holdout_x_qnorm <- t(
@@ -54,6 +61,8 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
     )
     rownames(holdout_x_qnorm) <- rownames(datain$holdout_x)
     colnames(holdout_x_qnorm) <- colnames(datain$holdout_x)
+    cat("\nHold out data qnorm\n")
+    print(holdout_x_qnorm[1:5, 1:5])
 
     # merge data
     merge_x_qnorm <- merge.data.table(
@@ -66,7 +75,7 @@ for (ifile in seq_len(length.out = length(fsmeta_train))) {
         replacement = "background_corrected_expression_qnorm_",
         x = fsmeta_train[ifile]
     )
-    cat("Write qnorm file:", filename_qnorm, "\n")
+    cat("\nWrite qnorm file:", filename_qnorm, "\n")
     fwrite(x = merge_x_qnorm, file = filename_qnorm)
 
     # diagnostic plots
