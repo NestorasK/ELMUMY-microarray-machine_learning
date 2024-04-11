@@ -2,3 +2,4 @@ data
 results
 trash
 __pycache__
+.lintr

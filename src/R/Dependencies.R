@@ -15,3 +15,7 @@ if (!require("BiocManager", quietly = TRUE)) {
 }
 
 BiocManager::install("ArrayExpress")
+
+install.packages("gbm")
+install.packages("xgboost")
+install.packages("kernlab")
