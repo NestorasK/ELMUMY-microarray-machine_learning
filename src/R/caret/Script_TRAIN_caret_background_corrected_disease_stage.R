@@ -172,7 +172,7 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
                 path2save, "models_comparison_", transformationi,
                 ".pdf"
             ),
-            width = 7,
+            width = 5,
             height = 4
         )
         theme1 <- trellis.par.get()
@@ -184,7 +184,7 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
         print(
             bwplot(
                 resamps,
-                layout = c(2, 1), main = "Cross Validation performance"
+                layout = c(1, 1), main = "Cross Validation performance"
             )
         )
         dev.off()
