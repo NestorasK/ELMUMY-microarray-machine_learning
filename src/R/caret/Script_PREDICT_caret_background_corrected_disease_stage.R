@@ -32,8 +32,14 @@ fsmeta_test <- list.files(
     pattern = ".*holdout.*progressing_MGUS.*",
     full.names = TRUE, recursive = TRUE
 )[4]
-path2save <- "results/experiments_caret/multiple_myeloma_stage/predictions/"
-path2read_models <- "results/experiments_caret/multiple_myeloma_stage/training/"
+path2save <- paste0(
+    "results/experiments_caret/multiple_myeloma_stage/",
+    "predictions_optimizing_multiclass_auc/"
+)
+path2read_models <- paste0(
+    "results/experiments_caret/multiple_myeloma_stage/",
+    "training_optimizing_multiclass_auc/"
+)
 
 # Calculations ####
 preds_all <- vector(mode = "list", length = length(fsmeta_train))
@@ -108,7 +114,10 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
             FUN = function(mli) {
                 cat("Predict", mli$method, "...\n")
                 prd_mi <- data.frame(
-                    class_pred = predict(mli, datain$holdout_x)
+                    predict.train(
+                        object = mli, newdata = datain$holdout_x,
+                        type = "prob"
+                    )
                 )
                 prd_mi$method <- mli$method
                 prd_mi$rn <- rownames(datain$holdout_x)
@@ -117,6 +126,15 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
         )
         preds_transformi_dt <- rbindlist(l = preds_transformi)
         preds_transformi_dt$transformation <- transformationi
+        preds_transformi_dt$class_pred <- c("MGUS", "MM", "Normal")[
+            apply(
+                X = as.matrix(
+                    x = preds_transformi_dt[, c("MGUS", "MM", "Normal")]
+                ),
+                MARGIN = 1,
+                which.max
+            )
+        ]
         return(preds_transformi_dt)
     }
     preds_all_transform$meta_train <- basename(fmeta_train)
