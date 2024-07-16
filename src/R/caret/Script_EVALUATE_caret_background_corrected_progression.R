@@ -136,6 +136,7 @@ myfun <- function(str) {
     return(out)
 }
 auc_all$meta_train2plot <- sapply(X = auc_all[, meta_train], FUN = myfun)
+fwrite(x = auc_all, file = paste0(path2save, "auc_all.csv"))
 
 for (metatri in unique(auc_all[, meta_train2plot])) {
     if (grepl(pattern = "+", x = metatri, fixed = TRUE)) {
@@ -170,5 +171,48 @@ for (metatri in unique(auc_all[, meta_train2plot])) {
             "_plot_jitter_performance_alldata.pdf"
         ),
         plot = plot_jitter_perf, width = widthi, height = heighti
+    )
+}
+
+for (metatri in unique(auc_all[, meta_train2plot])) {
+    plot_point_perf <- ggplot(
+        data = melt.data.table(
+            data = unique(
+                auc_all[
+                    meta_train2plot == metatri & dataset == "GSE235356",
+                    c(
+                        "method", "transformation", "meta_train",
+                        "dataset", "platform", "meta_train2plot",
+                        "auc_test", "Mean"
+                    )
+                ]
+            ),
+            id.vars = c(
+                "method", "transformation", "meta_train",
+                "dataset", "platform", "meta_train2plot"
+            ),
+            variable.name = "metric", value.name = "AUC"
+        ),
+        mapping = aes(
+            x = transformation, y = AUC,
+            colour = metric
+        )
+    ) +
+        geom_point(shape = 1) +
+        scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+        ylab("AUC holdout") +
+        theme(
+            axis.text.x = element_text(angle = 60, hjust = 1),
+            legend.position = "bottom"
+        ) +
+        facet_wrap(facets = vars(method), ncol = 2) +
+        ggtitle(paste0(metatri, " | test: GSE235356"))
+
+    ggsave(
+        filename = paste0(
+            path2save, metatri,
+            "_plot_point_performance_GSE235356.pdf"
+        ),
+        plot = plot_point_perf, width = 5, height = 8
     )
 }
