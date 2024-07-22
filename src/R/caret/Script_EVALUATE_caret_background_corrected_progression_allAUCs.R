@@ -62,6 +62,7 @@ plot_auc <- ggplot(
     ) +
     ylab("AUC holdout") +
     xlab("") +
+    ggtitle("Test set: GSE235356") +
     # theme_bw() +
     theme(
         axis.text.x = element_text(angle = 60, hjust = 1),
