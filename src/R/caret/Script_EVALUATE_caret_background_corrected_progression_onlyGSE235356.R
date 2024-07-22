@@ -101,7 +101,6 @@ plot_boxplot_perf <- ggplot(
     )
 ) +
     geom_boxplot() +
-    scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
     ylab("AUC") +
     theme(
         axis.text.x = element_text(angle = 60, hjust = 1),
