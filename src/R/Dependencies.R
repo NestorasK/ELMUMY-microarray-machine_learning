@@ -19,3 +19,5 @@ BiocManager::install("ArrayExpress")
 install.packages("gbm")
 install.packages("xgboost")
 install.packages("kernlab")
+
+BiocManager::install("hgu133plus2.db")

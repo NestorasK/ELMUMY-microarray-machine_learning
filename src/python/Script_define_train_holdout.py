@@ -11,9 +11,9 @@
 import pandas as pd
 
 # User input
-classes_to_train = ["Normal", "MGUS", "MM"]
-classes_to_test = ["Normal", "MGUS", "MM", "progressing_MGUS"]
-training_datasets = [["GSE6477"]]
+classes_to_train = ["MGUS", "MM"]
+classes_to_test = ["MGUS", "progressing_MGUS"]
+training_datasets = [["GSE6477", "GSE2113", "EMTAB316", "GSE13591"]]
 path2read = "data/processed_gpl96_gpl570_affy44_platform/"
 path2write = "data/processed_gpl96_gpl570_affy44_platform/"
 

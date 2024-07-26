@@ -9,15 +9,26 @@ file_expr <- paste0(
     path2read,
     "background_corrected_expression_rma.csv"
 )
-fsmeta_train <- list.files(
-    path = path2read, pattern = "metadata_train.*Normal*",
-    full.names = TRUE, recursive = TRUE
+# fsmeta_train <- list.files(
+#     path = path2read, pattern = "metadata_train.*Normal*",
+#     full.names = TRUE, recursive = TRUE
+# )
+
+fsmeta_train <- paste0(
+    path2read,
+    "metadata_train_classes:['MGUS', 'MM']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591'].csv"
 )
+
+
 cat("Metadata to train:", fsmeta_train, "\n")
-fsmeta_test <- list.files(
-    path = path2read,
-    pattern = ".*holdout.*Normal.*",
-    full.names = TRUE, recursive = TRUE
+# fsmeta_test <- list.files(
+#     path = path2read,
+#     pattern = ".*holdout.*Normal.*",
+#     full.names = TRUE, recursive = TRUE
+# )
+fsmeta_test <- paste0(
+    path2read,
+    "metadata_holdout_classes:['MGUS', 'progressing_MGUS']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591'].csv"
 )
 cat("Metadata to test:", fsmeta_test, "\n")
 
