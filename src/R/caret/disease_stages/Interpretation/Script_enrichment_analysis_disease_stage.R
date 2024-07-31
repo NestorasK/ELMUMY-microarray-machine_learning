@@ -12,7 +12,7 @@ hgd_browse()
 
 path2read <- paste0(
     "results/experiments_caret/multiple_myeloma_stage/",
-    "interpretation_optimizing_multiclass_auc/"
+    "interpretation_optimizing_multiclass_auc/variable_importance/"
 )
 
 path2save <- paste0(
@@ -33,7 +33,7 @@ importance_all$myOverall <- rowSums(
     na.rm = TRUE
 )
 importance_all <- importance_all[
-    myOverall > 0 & transformation != "ratios" & method != "svmLinear2",
+    myOverall > 0 & method != "svmLinear2",
 ]
 importance_all <- importance_all[order(-myOverall), ]
 
@@ -43,7 +43,14 @@ probe_lists <- vector(
 )
 counter <- 1
 for (methodi in unique(importance_all[, method])) {
-    probe_lists[[counter]] <- unique(importance_all[method == methodi, rn])
+    probe_lists[[counter]] <- unique(
+        x = unlist(
+            strsplit(
+                x = importance_all[method == methodi, rn],
+                split = "///", fixed = TRUE
+            )
+        )
+    )
     counter <- counter + 1
 
     # write file
@@ -117,42 +124,78 @@ do_results <- compareCluster(
 )
 
 # View results
-View(as.data.frame(go_results))
-View(as.data.frame(pathway_results))
-View(as.data.frame(kegg_results))
-View(as.data.frame(do_results))
+terms_to_check <- "MAPK|RAS|RAF|MEK|ERK|PI3K|AKT|NF-KB|STAT|Wnt|Hedgehog|TNFa|myeloid|leukemia|myeloma|cancer"
 
 # Visualize GO Enrichment Analysis
 dotplot(go_results) + ggtitle("GO Enrichment Analysis")
 # Specific GO terms
 go_results_df <- as.data.frame(go_results)
 specific_go_results_df <- go_results_df[
-    grepl(pattern = "myeloid|leukemia", x = go_results_df$Description),
+    grepl(
+        pattern = terms_to_check, x = go_results_df$Description,
+        ignore.case = TRUE
+    ),
 ]
 specific_go_results <- new(
     "compareClusterResult",
     compareClusterResult = specific_go_results_df
 )
-dotplot(specific_go_results) +
+go_plot <- dotplot(specific_go_results) +
     ggtitle("Selected GO Enrichment Analysis")
+ggsave(
+    filename = paste0(path2save, "Selected GO Enrichment Analysis.pdf"),
+    plot = go_plot, width = 7.5, height = 5
+)
 
 # Visualize Pathway Enrichment Analysis Results
-dotplot(pathway_results) + ggtitle("Pathway Enrichment Analysis")
+pathway_results_df <- as.data.frame(pathway_results)
+selected_pathway_results <- new(
+    "compareClusterResult",
+    compareClusterResult = pathway_results_df[
+        grepl(
+            pattern = terms_to_check,
+            x = pathway_results@compareClusterResult$Description,
+            ignore.case = TRUE
+        ),
+    ]
+)
+pathway_plot <- dotplot(selected_pathway_results) +
+    ggtitle("Selected Pathway Enrichment Analysis")
+ggsave(
+    filename = paste0(path2save, "Selected Pathway Enrichment Analysis.pdf"),
+    plot = pathway_plot, width = 7.5, height = 10
+)
 
 # Visualize KEGG Pathway Enrichment Results
+kegg_df <- as.data.frame(kegg_results)
 dotplot(kegg_results) + ggtitle("KEGG Pathway Enrichment Analysis")
 
-
-
+specific_kegg_df <- kegg_df[
+    grepl(
+        pattern = terms_to_check,
+        x = kegg_df$Description
+    ),
+]
+specific_kegg_results <- new(
+    "compareClusterResult",
+    compareClusterResult = specific_kegg_df
+)
+kegg_plot <- dotplot(specific_kegg_results, showCategory = NULL) +
+    ggtitle("Selected KEGG Pathway Enrichment Analysis")
+ggsave(
+    filename = paste0(
+        path2save, "Selected KEGG Pathway Enrichment Analysis.pdf"
+    ),
+    plot = kegg_plot, width = 7.5, height = 9
+)
 
 # Visualize Disease Ontology Enrichment Results
 dotplot(do_results) + ggtitle("Disease Ontology Enrichment Analysis")
 
 # Focus on specific diseases
-View(as.data.frame(do_results))
 do_results_df <- as.data.frame(do_results)
 inds <- grepl(
-    pattern = "leukemia|myeloid|myeloma",
+    pattern = terms_to_check,
     x = do_results_df$Description
 )
 specific_do_results_df <- do_results_df[inds, ]
@@ -160,6 +203,12 @@ specific_do_results <- new(
     "compareClusterResult",
     compareClusterResult = specific_do_results_df
 )
-dotplot(specific_do_results, showCategory = NULL) + ggtitle(
+do_plot <- dotplot(specific_do_results) + ggtitle(
     "Selected Disease Ontology Enrichment Analysis"
+)
+ggsave(
+    filename = paste0(
+        path2save, "Selected Disease Ontology Enrichment Analysis.pdf"
+    ),
+    plot = do_plot, width = 7.5, height = 5
 )
