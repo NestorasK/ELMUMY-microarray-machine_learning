@@ -39,6 +39,12 @@ def get_frequencies(df, verbose=True):
 def calculate_ratios(df_coli):
     # Generate all possible combinations of unique values
     value_combinations = list(combinations(df_coli, 2))
+    if pd.api.types.is_string_dtype(df_coli):
+        type(value_combinations[0])
+        concat_probes = []
+        for vj in value_combinations:
+            concat_probes.append(vj[0] + "///" + vj[1])
+        return concat_probes
     # Compute the ratio for each combination
     my_ratios = []
     for a, b in value_combinations:

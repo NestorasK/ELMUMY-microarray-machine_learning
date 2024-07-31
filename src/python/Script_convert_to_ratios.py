@@ -101,3 +101,10 @@ filename_ratios = file_expression.replace(
 )
 print(f"Writing file: {filename_ratios}")
 df_ratio.to_csv(filename_ratios, index=False)
+
+# Add the probe information to a new file
+df_ratio_onlyprobes = calculate_ratios_df(
+    df=df_expr_select[['rn']], verbose=True
+)
+filename_probes = filename_ratios.replace(".csv", "_onlyprobes.csv")
+df_ratio_onlyprobes.to_csv(path_or_buf=filename_probes, index=False)
