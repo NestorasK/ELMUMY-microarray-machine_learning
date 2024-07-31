@@ -38,7 +38,7 @@ fsmeta_test <- list.files(
 )[5]
 path2save <- paste0(
     "results/experiments_caret/multiple_myeloma_stage/",
-    "interpretation_optimizing_multiclass_auc/"
+    "interpretation_optimizing_multiclass_auc/variable_importance/"
 )
 path2read_models <- paste0(
     "results/experiments_caret/multiple_myeloma_stage/",
@@ -152,5 +152,34 @@ for (j in seq_len(length.out = length(fsmeta_train))) {
 importance_all <- rbindlist(l = importance_all)
 fwrite(
     x = importance_all,
+    file = paste0(path2save, "variable_importance_caret.csv")
+)
+
+# Add ratio probes information
+importance_all <- fread(paste0(path2save, "variable_importance_caret.csv"))
+unique(importance_all[, rn])
+ratio_probes <- fread(
+    paste0(
+        "data/processed_gpl96_gpl570_affy44_platform/",
+        "background_corrected_expression_ratios_onlyprobes.csv"
+    )
+)
+colnames(ratio_probes) <- "ratio_probes"
+ratio_probes$rn <- paste0("V", seq_len(length.out = nrow(ratio_probes)))
+test <- merge.data.table(
+    x = importance_all[, "rn"], y = ratio_probes,
+    by = "rn", all = TRUE
+)
+test$rn_all <- ifelse(is.na(test$ratio_probes),
+    yes = test$rn, no = test$ratio_probes
+)
+importance_all_plus_ratioprobes <- merge.data.table(
+    x = unique(test[, c("rn", "rn_new")]),
+    y = importance_all, by = "rn"
+)
+importance_all_plus_ratioprobes[, rn := NULL]
+colnames(importance_all_plus_ratioprobes)[1] <- "rn"
+fwrite(
+    x = importance_all_plus_ratioprobes,
     file = paste0(path2save, "variable_importance_caret.csv")
 )
