@@ -54,7 +54,16 @@ for (methodi in unique(importance_all[, method])) {
     counter <- counter + 1
 
     # write file
-    dt <- data.table(unique(importance_all[method == methodi, rn]))
+    dt <- data.table(
+        unique(
+            x = unlist(
+                strsplit(
+                    x = importance_all[method == methodi, rn],
+                    split = "///", fixed = TRUE
+                )
+            )
+        )
+    )
     colnames(dt) <- paste0(">", methodi)
     fwrite(
         x = dt, file = paste0(path2save, methodi, "_important_features.fasta"),
@@ -124,7 +133,11 @@ do_results <- compareCluster(
 )
 
 # View results
-terms_to_check <- "MAPK|RAS|RAF|MEK|ERK|PI3K|AKT|NF-KB|STAT|Wnt|Hedgehog|TNFa|myeloid|leukemia|myeloma|cancer"
+terms_to_check <- paste0(
+    "MAPK|RAS|RAF|MEK|ERK|PI3K|AKT|NF-KB|",
+    "STAT|Wnt|Hedgehog|TNFa|",
+    "myeloid|leukemia|myeloma|cancer"
+)
 
 # Visualize GO Enrichment Analysis
 dotplot(go_results) + ggtitle("GO Enrichment Analysis")
@@ -160,7 +173,7 @@ selected_pathway_results <- new(
     ]
 )
 pathway_plot <- dotplot(selected_pathway_results) +
-    ggtitle("Selected Pathway Enrichment Analysis")
+    ggtitle("Selected Reactome Pathways")
 ggsave(
     filename = paste0(path2save, "Selected Pathway Enrichment Analysis.pdf"),
     plot = pathway_plot, width = 7.5, height = 10
