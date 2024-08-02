@@ -12,6 +12,11 @@ auc_notGSE235356 <- fread(
         "evaluation_optimizing_auc/auc_all.csv"
     )
 )
+# Remove results from GSE6477 + EMTAB317 training
+auc_notGSE235356 <- auc_notGSE235356[
+    meta_train2plot != "train: GSE6477 + EMTAB317",
+]
+
 auc_notGSE235356$ncv_fold <- 1
 auc_GSE235356 <- fread(
     paste0(
@@ -53,12 +58,12 @@ plot_auc <- ggplot(
     mapping = aes(x = transformation, y = auc_test)
 ) +
     geom_boxplot() +
-    geom_point(
+    geom_jitter(
         data = auc_all[training != "GSE235356"],
         mapping = aes(
             x = transformation, y = auc_test,
             colour = training
-        )
+        ), height = 0, width = 0.1
     ) +
     ylab("AUC holdout") +
     xlab("") +
@@ -68,12 +73,13 @@ plot_auc <- ggplot(
         axis.text.x = element_text(angle = 60, hjust = 1),
         legend.position = "bottom"
     ) +
-    facet_wrap(facets = vars(method), ncol = 2)
+    facet_wrap(facets = vars(method))
 ggsave(
     filename = paste0(
         "results/experiments_caret/multiple_myeloma_progression_onlyGSE235356/",
         "evaluation_optimizing_auc/plot_generalization_performance_alldata.pdf"
-    ), width = 6, height = 8
+    ), plot = plot_auc,
+    width = 8, height = 7
 )
 
 
@@ -138,11 +144,11 @@ plot_auccv <- ggplot(
         axis.text.x = element_text(angle = 60, hjust = 1),
         legend.position = "bottom"
     ) +
-    facet_wrap(facets = vars(method), ncol = 2)
+    facet_wrap(facets = vars(method))
 ggsave(
     filename = paste0(
         "results/experiments_caret/multiple_myeloma_progression_onlyGSE235356/",
         "evaluation_optimizing_auc/plot_generalization_performance_alldata_cverror.pdf"
     ), plot = plot_auccv,
-    width = 6, height = 9
+    width = 8, height = 7
 )

@@ -24,14 +24,18 @@ files_expr_stable <- paste0(
         "background_corrected_expression_ratios.csv"
     )
 )
-fsmeta_train <- list.files(
-    path = path2read, pattern = "metadata_train_classes", full.names = TRUE
-)[-4]
-fsmeta_test <- list.files(
-    path = path2read,
-    pattern = ".*holdout.*progressing_MGUS.*",
-    full.names = TRUE, recursive = TRUE
-)[-4]
+fsmeta_train <- sort(
+    list.files(
+        path = path2read, pattern = "metadata_train_classes", full.names = TRUE
+    )
+)[-5]
+fsmeta_test <- sort(
+    list.files(
+        path = path2read,
+        pattern = ".*holdout.*progressing_MGUS.*",
+        full.names = TRUE, recursive = TRUE
+    )
+)[-5]
 path2save <- paste0(
     "results/experiments_caret/multiple_myeloma_progression/",
     "predictions_optimizing_auc/"

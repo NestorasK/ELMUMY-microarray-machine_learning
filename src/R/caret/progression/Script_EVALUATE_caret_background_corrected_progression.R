@@ -16,6 +16,10 @@ predictions <- fread(
 )
 # Remove because we cannot calculate auc with one class
 predictions <- predictions[!dataset %in% c("GSE5900", "GSE14230"), ]
+predictions <- predictions[
+    !(meta_train == "metadata_train_classes:['MGUS', 'MM']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591'].csv" &
+        dataset == "EMTAB317"),
+]
 predictions$class[predictions$class == "progressing_MGUS"] <- "MM"
 
 # Path to save

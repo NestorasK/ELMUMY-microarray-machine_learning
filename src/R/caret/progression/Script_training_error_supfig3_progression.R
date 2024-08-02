@@ -1,5 +1,6 @@
 rm(list = ls())
 library(caret)
+library(dplyr)
 library(httpgd)
 hgd()
 hgd_browse()
@@ -50,6 +51,11 @@ model_names <- sub(
     replacement = "GSE6477", x = model_names,
     fixed = TRUE
 )
+model_names <- sub(
+    pattern = "_['MGUS', 'MM']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591']_['MGUS', 'MM']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591'].RData",
+    replacement = "_GSE6477 + GSE2113 + EMTAB316 + GSE13591", x = model_names,
+    fixed = TRUE
+)
 # other
 model_names <- sub(
     pattern = "_['MGUS', 'MM']_dataset:['EMTAB317'].RData",
@@ -66,6 +72,11 @@ model_names <- sub(
     replacement = "_GSE6477", x = model_names,
     fixed = TRUE
 )
+model_names <- sub(
+    pattern = "_['MGUS', 'MM']_dataset:['GSE6477', 'GSE2113', 'EMTAB316', 'GSE13591'].RData",
+    replacement = "_GSE6477 + GSE2113 + EMTAB316 + GSE13591", x = model_names,
+    fixed = TRUE
+)
 names(models) <- model_names
 
 # Calculate performance
@@ -78,7 +89,7 @@ train_dataset <- strsplit(
         }
     )
 
-trdti <- "GSE6477 + EMTAB317"
+trdti <- "GSE6477 + GSE2113 + EMTAB316 + GSE13591"
 for (trdti in unique(train_dataset)) {
     modelsi <- models[train_dataset == trdti]
     names(modelsi) <- sub(
