@@ -24,7 +24,7 @@ importance_all_gpl96 <- fread(
         "variable_importance_caret.csv"
     )
 )
-importance_all_gpl96$meta_train <- "all_GLP96"
+importance_all_gpl96$meta_train <- "all GLP96"
 importance_all_gpl96[
     , myOverall := rowMeans(x = .SD, na.rm = TRUE),
     .SDcols = c("MGUS", "MM", "Overall")
@@ -65,6 +65,12 @@ numfeatures <- importance_all[
     .(nfeatures = sum(myOverall > 0)),
     by = c("method", "transformation", "meta_train")
 ]
+
+tapply(
+    X = numfeatures$nfeatures,
+    INDEX = paste(numfeatures$meta_train, numfeatures$method),
+    FUN = summary
+)
 
 set.seed(123)
 dot_plot_nimpfeat <- ggplot(
@@ -123,6 +129,14 @@ number_of_methods[
         split = "+", keep = c(1, 2), fixed = TRUE
     )
 ]
+
+number_of_methods <- number_of_methods[number_of_trainingsets == 2, ]
+tapply(
+    X = number_of_methods$number_of_probes,
+    INDEX = paste(number_of_methods$method),
+    FUN = summary
+)
+
 set.seed(42)
 dotplot_commonprobes_methods <- ggplot(
     data = number_of_methods[number_of_trainingsets == 2, ],
@@ -136,7 +150,7 @@ dotplot_commonprobes_methods <- ggplot(
     xlab("") +
     ggtitle(
         label = "Number of common probes across training sets",
-        subtitle = "All GPL96 | GSE235356"
+        subtitle = "all GPL96 | GSE235356"
     )
 ggsave(
     filename = paste0(
