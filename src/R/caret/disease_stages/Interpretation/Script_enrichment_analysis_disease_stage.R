@@ -100,6 +100,10 @@ go_results <- compareCluster(
     pvalueCutoff = 0.05,
     qvalueCutoff = 0.2
 )
+fwrite(
+    x = as.data.table(go_results),
+    file = paste0(path2save, "enrichGO_results.csv")
+)
 
 # enrich pathways
 pathway_results <- compareCluster(
@@ -111,6 +115,10 @@ pathway_results <- compareCluster(
     qvalueCutoff = 0.2,
     readable = TRUE
 )
+fwrite(
+    x = as.data.table(pathway_results),
+    file = paste0(path2save, "enrichPathway_results.csv")
+)
 
 # KEGG pathway
 kegg_results <- compareCluster(
@@ -120,6 +128,10 @@ kegg_results <- compareCluster(
     pAdjustMethod = "BH",
     pvalueCutoff = 0.05,
     qvalueCutoff = 0.2
+)
+fwrite(
+    x = as.data.table(kegg_results),
+    file = paste0(path2save, "enrichKEGG_results.csv")
 )
 
 # Disease Ontology Enrichment Analysis
@@ -131,12 +143,19 @@ do_results <- compareCluster(
     pvalueCutoff = 0.05,
     qvalueCutoff = 0.2
 )
+fwrite(
+    x = as.data.table(do_results),
+    file = paste0(path2save, "enrichDO_results.csv")
+)
 
 # View results
 terms_to_check <- paste0(
-    "MAPK|RAS|RAF|MEK|ERK|PI3K|AKT|NF-KB|",
-    "STAT|Wnt|Hedgehog|TNFa|",
-    "myeloid|leukemia|myeloma|cancer"
+    "MAPK |RAS |RAF |MEK |ERK |ERK1 |ERK2 |PI3K |AKT |NF-KB |",
+    "Jak-STAT|Wnt |Hedgehog|TNFa|mTOR",
+    "|multiple myeloma",
+    "|myeloid|leukemia|myeloma|Plasmacytoma|Amyloidosis",
+    "|Chronic Lymphocytic Leukemia|POEMS|Heavy Chain Disease",
+    "|Mastocytosis|Castleman|Lymphoma"
 )
 
 # Visualize GO Enrichment Analysis
@@ -157,7 +176,7 @@ go_plot <- dotplot(specific_go_results) +
     ggtitle("Selected GO Enrichment Analysis")
 ggsave(
     filename = paste0(path2save, "Selected GO Enrichment Analysis.pdf"),
-    plot = go_plot, width = 7.5, height = 5
+    plot = go_plot, width = 7.5, height = 4
 )
 
 # Visualize Pathway Enrichment Analysis Results
@@ -186,7 +205,8 @@ dotplot(kegg_results) + ggtitle("KEGG Pathway Enrichment Analysis")
 specific_kegg_df <- kegg_df[
     grepl(
         pattern = terms_to_check,
-        x = kegg_df$Description
+        x = kegg_df$Description,
+        ignore.case = TRUE
     ),
 ]
 specific_kegg_results <- new(
@@ -199,7 +219,7 @@ ggsave(
     filename = paste0(
         path2save, "Selected KEGG Pathway Enrichment Analysis.pdf"
     ),
-    plot = kegg_plot, width = 7.5, height = 9
+    plot = kegg_plot, width = 7.5, height = 5
 )
 
 # Visualize Disease Ontology Enrichment Results
@@ -209,7 +229,8 @@ dotplot(do_results) + ggtitle("Disease Ontology Enrichment Analysis")
 do_results_df <- as.data.frame(do_results)
 inds <- grepl(
     pattern = terms_to_check,
-    x = do_results_df$Description
+    x = do_results_df$Description,
+    ignore.case = TRUE
 )
 specific_do_results_df <- do_results_df[inds, ]
 specific_do_results <- new(
