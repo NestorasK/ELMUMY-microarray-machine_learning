@@ -81,6 +81,10 @@ auc_holdout$pvalues <- apply(
         sum(li[1] <= li) / length(li)
     }
 )
+colnames(auc_holdout)[1] <- "test_dataset"
+fwrite(x = auc_holdout, file = paste0(path2save, "permutation_pvalues.csv"))
+
+# Plots
 set.seed(42)
 plot_pvalues <- ggplot(
     data = auc_holdout,
