@@ -198,9 +198,12 @@ fwrite(
 
 # View results
 terms_to_check <- paste0(
-    "MAPK|RAS|RAF|MEK|ERK|PI3K|AKT|NF-KB|",
-    "STAT|Wnt|Hedgehog|TNFa|mTOR",
-    "myeloid|leukemia|myeloma|cancer"
+    "MAPK |RAS |RAF |MEK |ERK |PI3K |AKT |NF-KB |",
+    "Jak-STAT|Wnt |Hedgehog|TNFa|mTOR",
+    "|multiple myeloma",
+    "|myeloid|leukemia|myeloma|Plasmacytoma|Amyloidosis",
+    "|Chronic Lymphocytic Leukemia|POEMS|Heavy Chain Disease",
+    "|Mastocytosis|Castleman|Lymphoma"
 )
 
 # Visualize GO Enrichment Analysis
@@ -224,7 +227,7 @@ ggsave(
         path2save,
         "Selected GO Enrichment Analysis - GSE235356 vs allGLP96.pdf"
     ),
-    plot = go_plot, width = 15, height = 13
+    plot = go_plot, width = 15, height = 6
 )
 
 # Visualize Pathway Enrichment Analysis Results
@@ -246,7 +249,7 @@ ggsave(
         path2save,
         "Selected Pathway Enrichment Analysis - GSE235356 vs allGLP96.pdf"
     ),
-    plot = pathway_plot, width = 14, height = 6
+    plot = pathway_plot, width = 12, height = 7
 )
 
 # Visualize KEGG Pathway Enrichment Results
@@ -263,14 +266,14 @@ specific_kegg_results <- new(
     "compareClusterResult",
     compareClusterResult = specific_kegg_df
 )
-kegg_plot <- dotplot(specific_kegg_results) +
+kegg_plot <- dotplot(specific_kegg_results, showCategory = NULL) +
     ggtitle("Selected KEGG Pathway Enrichment Analysis")
 ggsave(
     filename = paste0(
         path2save,
         "Selected KEGG Pathway Enrichment Analysis - GSE235356 vs allGLP96.pdf"
     ),
-    plot = kegg_plot, width = 15, height = 5
+    plot = kegg_plot, width = 15, height = 4
 )
 
 # Visualize Disease Ontology Enrichment Results
@@ -280,7 +283,8 @@ dotplot(do_results) + ggtitle("Disease Ontology Enrichment Analysis")
 do_results_df <- as.data.frame(do_results)
 inds <- grepl(
     pattern = terms_to_check,
-    x = do_results_df$Description
+    x = do_results_df$Description,
+    ignore.case = TRUE
 )
 specific_do_results_df <- do_results_df[inds, ]
 specific_do_results <- new(
@@ -295,5 +299,5 @@ ggsave(
         path2save,
         "Selected Disease Ontology Enrichment Analysis - GSE235356 vs allGLP96.pdf"
     ),
-    plot = do_plot, width = 15, height = 6
+    plot = do_plot, width = 15, height = 4
 )
