@@ -10,7 +10,7 @@ hgd()
 hgd_browse()
 
 path2read <- paste0(
-    "results/experiments_caret/multiple_myeloma_progression/",
+    "results/experiments_caret/multiple_myeloma_progression_onlyGSE235356/",
     "interpretation_optimizing_auc/variable_importance/"
 )
 
@@ -29,7 +29,7 @@ importance_all_notratios <- importance_all[
     transformation != "ratios" & transformation != "binary_0",
 ]
 # Add gene information
-feature_data <- fread("data/raw/GSE6477/feature_data.csv")
+feature_data <- fread("data/raw/GSE235356/feature_data.csv")
 feature_data$Gene.symbol <- sub(
     pattern = "///", replacement = "_",
     x = feature_data$Gene.symbol
@@ -56,7 +56,7 @@ importance_allj <- copy(importance_all_notratios)
 # Mean overall #
 importance_allj[
     , myOverall := rowMeans(x = .SD, na.rm = TRUE),
-    .SDcols = c("MGUS", "MM", "Overall")
+    .SDcols = c("MGUS", "progressing_MGUS", "Overall")
 ]
 importance_allj[, method_transform := paste0(method, "_", transformation)]
 data2plot_mean <- unique(
@@ -72,7 +72,7 @@ importance_all_melt <- melt.data.table(
     data = importance_all_notratios[
         , -c("Gene.symbol", "Gene.symbol.short", "rn")
     ],
-    id.vars = c("rn2plot", "method", "transformation", "meta_train"),
+    id.vars = c("rn2plot", "method", "transformation"),
     variable.name = "perclass", value.name = "importance"
 )
 importance_all_melt <- na.omit(importance_all_melt)
@@ -172,7 +172,7 @@ for (scorei in c("final_rank", "myOverall")) {
                 path2read,
                 "heatmap_variable_importance_",
                 methodi, "_", scorei, "_topnumbergenes_", topnumgenesi,
-                "_allGLP.png"
+                "_onlyGSE235356.png"
             ), width = 1300, height = 2400,
             res = 300
         )
@@ -221,7 +221,7 @@ for (scorei in c("final_rank", "myOverall")) {
             path2read,
             "heatmap_variable_importance_allmethods_",
             scorei, "_topnumbergenes_", topnumgenesi,
-            "_allGLP.png"
+            "_onlyGSE235356.png"
         ), width = 1600, height = 2400,
         res = 300
     )
