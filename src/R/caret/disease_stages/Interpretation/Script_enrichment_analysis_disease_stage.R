@@ -72,22 +72,16 @@ for (methodi in unique(importance_all[, method])) {
 }
 names(probe_lists) <- unique(importance_all[, method])
 
-# Convert probe IDs to gene symbols using the annotation package
-convert_probes_to_genes <- function(probes) {
-    # Get the gene symbols
-    gene_symbols <- unlist(mget(probes, hgu133plus2SYMBOL))
-    return(gene_symbols)
-}
-
-# Apply the conversion function to all lists
-gene_lists <- lapply(probe_lists, convert_probes_to_genes)
-
-# Convert gene symbols to Entrez IDs
-gene_lists_entrez <- lapply(gene_lists, function(genes) {
-    bitr(genes,
-        fromType = "SYMBOL",
-        toType = "ENTREZID", OrgDb = org.Hs.eg.db
-    )$ENTREZID
+# Convert probe IDs to gene entrez IDs using the feature_data file
+feature_data <- fread("data/raw/GSE6477/feature_data.csv")
+gene_lists_entrez <- lapply(probe_lists, function(li) {
+    gene_ids <- unlist(
+        strsplit(
+            x = feature_data[rn %in% li, Gene.ID], split = "///",
+            fixed = TRUE
+        )
+    )
+    return(gene_ids)
 })
 
 # Perform enrichment analysis
@@ -176,7 +170,7 @@ go_plot <- dotplot(specific_go_results) +
     ggtitle("Selected GO Enrichment Analysis")
 ggsave(
     filename = paste0(path2save, "Selected GO Enrichment Analysis.pdf"),
-    plot = go_plot, width = 7.5, height = 4
+    plot = go_plot, width = 7.5, height = 5
 )
 
 # Visualize Pathway Enrichment Analysis Results
@@ -195,7 +189,7 @@ pathway_plot <- dotplot(selected_pathway_results) +
     ggtitle("Selected Reactome Pathways")
 ggsave(
     filename = paste0(path2save, "Selected Pathway Enrichment Analysis.pdf"),
-    plot = pathway_plot, width = 7.5, height = 10
+    plot = pathway_plot, width = 7.5, height = 11
 )
 
 # Visualize KEGG Pathway Enrichment Results
@@ -244,5 +238,5 @@ ggsave(
     filename = paste0(
         path2save, "Selected Disease Ontology Enrichment Analysis.pdf"
     ),
-    plot = do_plot, width = 7.5, height = 5
+    plot = do_plot, width = 7.5, height = 4
 )

@@ -118,22 +118,16 @@ names(probe_lists) <- paste0(
     method_train[, method], "+", method_train[, meta_train]
 )
 
-# Convert probe IDs to gene symbols using the annotation package
-convert_probes_to_genes <- function(probes) {
-    # Get the gene symbols
-    gene_symbols <- unlist(mget(probes, hgu133plus2SYMBOL))
-    return(gene_symbols)
-}
-
-# Apply the conversion function to all lists
-gene_lists <- lapply(probe_lists, convert_probes_to_genes)
-
-# Convert gene symbols to Entrez IDs
-gene_lists_entrez <- lapply(gene_lists, function(genes) {
-    bitr(genes,
-        fromType = "SYMBOL",
-        toType = "ENTREZID", OrgDb = org.Hs.eg.db
-    )$ENTREZID
+# Convert probe IDs to gene entrez IDs using the feature_data file
+feature_data <- fread("data/raw/GSE6477/feature_data.csv")
+gene_lists_entrez <- lapply(probe_lists, function(li) {
+    gene_ids <- unlist(
+        strsplit(
+            x = feature_data[rn %in% li, Gene.ID], split = "///",
+            fixed = TRUE
+        )
+    )
+    return(gene_ids)
 })
 
 # Perform enrichment analysis
@@ -273,7 +267,7 @@ ggsave(
         path2save,
         "Selected KEGG Pathway Enrichment Analysis - GSE235356 vs allGLP96.pdf"
     ),
-    plot = kegg_plot, width = 15, height = 4
+    plot = kegg_plot, width = 12, height = 4
 )
 
 # Visualize Disease Ontology Enrichment Results
