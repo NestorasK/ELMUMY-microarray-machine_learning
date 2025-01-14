@@ -148,7 +148,7 @@ plot_auccv <- ggplot(
 ggsave(
     filename = paste0(
         "results/experiments_caret/multiple_myeloma_progression_onlyGSE235356/",
-        "evaluation_optimizing_auc/plot_generalization_performance_alldata_cverror.pdf"
+        "evaluation_optimizing_auc/plot_generalization_performance_alldata_cverror.png"
     ), plot = plot_auccv,
     width = 8, height = 7
 )

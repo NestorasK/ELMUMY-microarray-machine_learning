@@ -51,8 +51,8 @@ ggsave(
     filename = paste0(
         "results/experiments_caret/multiple_myeloma_stage/",
         "interpretation_optimizing_multiclass_auc/variable_importance/",
-        "dotplot_num_imp_features_myOverall.pdf"
-    ), plot = dot_plot_nimpfeat, width = 5, height = 2.5
+        "dotplot_num_imp_features_myOverall.png"
+    ), plot = dot_plot_nimpfeat, width = 5.7, height = 2.3
 )
 
 # Number of common features

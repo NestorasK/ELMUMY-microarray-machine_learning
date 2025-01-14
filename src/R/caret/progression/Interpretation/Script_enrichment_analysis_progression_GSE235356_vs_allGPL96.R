@@ -291,7 +291,7 @@ do_plot <- dotplot(specific_do_results) + ggtitle(
 ggsave(
     filename = paste0(
         path2save,
-        "Selected Disease Ontology Enrichment Analysis - GSE235356 vs allGLP96.pdf"
+        "Selected Disease Ontology Enrichment Analysis - GSE235356 vs allGLP96.png"
     ),
-    plot = do_plot, width = 15, height = 4
+    plot = do_plot, width = 16, height = 4
 )

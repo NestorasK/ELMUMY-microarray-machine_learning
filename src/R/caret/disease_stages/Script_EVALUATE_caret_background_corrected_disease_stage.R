@@ -134,7 +134,7 @@ plot_perf_box[[counter]] <- ggplot(
 ) +
     geom_boxplot() +
     geom_jitter(width = 0.1, shape = 1, colour = "#666464", size = 0.7) +
-    scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+    scale_y_continuous(breaks = seq(0.3, 1, 0.1), limits = c(0.3, 1)) +
     ylab("Multiclass AUC test") +
     ggtitle("All data") +
     coord_flip()
@@ -183,7 +183,7 @@ plot_perf_box[[counter]] <- ggplot(
 
 ggsave(
     filename = paste0(
-        path2save, "plot_allboxplots_performance.pdf"
+        path2save, "plot_allboxplots_performance.png"
     ),
     plot = plot_grid(
         plot_perf_box[[1]],
@@ -194,7 +194,7 @@ ggsave(
         nrow = 2,
         labels = "AUTO"
     ),
-    width = 7, height = 4
+    width = 7.5, height = 4.5
 )
 
 # Generalization ####

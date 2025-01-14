@@ -211,9 +211,9 @@ kegg_plot <- dotplot(specific_kegg_results, showCategory = NULL) +
     ggtitle("Selected KEGG Pathway Enrichment Analysis")
 ggsave(
     filename = paste0(
-        path2save, "Selected KEGG Pathway Enrichment Analysis.pdf"
+        path2save, "Selected KEGG Pathway Enrichment Analysis.png"
     ),
-    plot = kegg_plot, width = 7.5, height = 5
+    plot = kegg_plot, width = 8, height = 5
 )
 
 # Visualize Disease Ontology Enrichment Results
@@ -236,7 +236,7 @@ do_plot <- dotplot(specific_do_results) + ggtitle(
 )
 ggsave(
     filename = paste0(
-        path2save, "Selected Disease Ontology Enrichment Analysis.pdf"
+        path2save, "Selected Disease Ontology Enrichment Analysis.png"
     ),
-    plot = do_plot, width = 7.5, height = 4
+    plot = do_plot, width = 8.2, height = 4.2
 )

@@ -109,6 +109,6 @@ plot_boxplot_perf <- ggplot(
     facet_wrap(facets = vars(method), ncol = 2)
 
 ggsave(
-    filename = paste0(path2save, "boxplot_onlyGSE235356.pdf"),
+    filename = paste0(path2save, "boxplot_onlyGSE235356.png"),
     plot = plot_boxplot_perf, width = 6, height = 9
 )
