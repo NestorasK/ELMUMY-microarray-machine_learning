@@ -47,6 +47,18 @@ dot_plot_nimpfeat <- ggplot(
         label = "Number of features in the models"
     ) +
     coord_flip()
+
+dot_plot_nimpfeat <- dot_plot_nimpfeat +
+    scale_y_continuous(
+        labels = function(x) {
+            x <- as.character(x)
+            x[x == "10000"] <- "10,000"
+            x[x == "15000"] <- "15,000"
+            x[x == "20000"] <- "20,000"
+            return(x)
+        }
+    )
+
 ggsave(
     filename = paste0(
         "results/experiments_caret/multiple_myeloma_stage/",
