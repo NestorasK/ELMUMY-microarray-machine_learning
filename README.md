@@ -1,4 +1,4 @@
-# Multiple Myeloma Staging and Progression Prediction
+# Source code for the publication: Predicting the Progression from Asymptomatic to Symptomatic Multiple Myeloma and Stage Classification Using Gene Expression Data
 This repository contains the code and resources associated with our study on enhancing multiple myeloma (MM) staging accuracy and predicting the progression of asymptomatic cases (MGUS) to symptomatic MM using machine learning approaches. Below is an overview of the repository structure, datasets, and analysis methods.
 Publication link: https://www.mdpi.com/2072-6694/17/2/332
 
